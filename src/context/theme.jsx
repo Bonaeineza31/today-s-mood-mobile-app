@@ -1,32 +1,26 @@
 import React, { createContext, useContext, useState } from 'react';
 
+// Create the theme context
 const ThemeContext = createContext();
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+// Custom hook to use the theme context
+export const useTheme = () => useContext(ThemeContext);
 
+// Theme provider component
 export const ThemeProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(false);
-
+  // Define your theme
   const theme = {
-    isDark,
     colors: {
-      background: isDark ? '#1a1a1a' : '#ffeb3b', // Bright yellow background
-      surface: isDark ? '#2d2d2d' : '#fff9c4', // Light yellow surface
-      card: isDark ? '#374151' : '#ffffff',
-      text: isDark ? '#ffffff' : '#1f2937',
-      textSecondary: isDark ? '#d1d5db' : '#4a4a4a',
-      primary: '#ff9800', // Orange for buttons
-      primaryDark: '#f57c00',
-      border: isDark ? '#4b5563' : '#fbc02d',
-      accent: '#ffeb3b', // Yellow accent
+      // Yellow theme based on the screenshot
+      background: '#FFEB3B', // Bright yellow background
+      card: '#FFFFFF',       // White cards
+      text: '#333333',       // Dark text
+      textSecondary: '#666666',
+      primary: '#FF9800',    // Orange for buttons
+      border: '#EEEEEE',
+      surface: '#FFFFFF',    // White surface
+      error: '#FF6B6B',
     },
-    toggleTheme: () => setIsDark(!isDark),
   };
 
   return (
