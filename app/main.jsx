@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../src/context/theme';
+import { Platform } from 'react-native';
 
 // Import your screens
 import TodayScreen from '../src/screen/today';
@@ -37,25 +38,28 @@ export default function MainScreen() {
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 85 : 65, // Taller for better accessibility
+          paddingBottom: Platform.OS === 'ios' ? 25 : 10,
+          paddingTop: 10,
+          position: 'absolute', // Make sure it's always on top
+          bottom: 0,
+          left: 0,
+          right: 0,
+          elevation: 10, // Android shadow
+          shadowColor: '#000', // iOS shadow
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
         },
-        headerShown: true,
-        headerStyle: {
-          backgroundColor: theme.colors.background,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
         },
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-        headerTitleAlign: 'center',
+        headerShown: false, // Remove header to avoid conflicts
       })}
     >
-      <Tab.Screen 
-        name="Today" 
-        component={TodayScreen} 
-        options={{ title: "How are you feeling today?" }}
-      />
+      <Tab.Screen name="Today" component={TodayScreen} />
       <Tab.Screen name="History" component={HistoryScreen} />
       <Tab.Screen name="Stats" component={StatsScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
