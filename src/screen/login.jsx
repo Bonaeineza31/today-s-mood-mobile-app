@@ -35,7 +35,7 @@ export default function LoginScreen() {
     setLoading(false);
 
     if (result.success) {
-      router.replace('/main'); // Changed from /(tabs) to /main
+      router.replace('/main');
     } else {
       Alert.alert('Login Failed', result.error || 'Please check your credentials');
     }
