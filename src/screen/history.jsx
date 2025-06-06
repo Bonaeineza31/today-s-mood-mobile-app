@@ -5,9 +5,11 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import { useTheme } from '../context/theme';
-import AnimatedBackground from '../components/animations'; // Keep floating smileys!
+import AnimatedBackground from '../components/animations';
+import MoodCard from '../components/moodcard'; // Use your animated component!
 
 export default function HistoryScreen() {
   const theme = useTheme();
@@ -20,7 +22,15 @@ export default function HistoryScreen() {
     { date: '2024-01-04', mood: '😄', label: 'Very Happy' },
     { date: '2024-01-03', mood: '😔', label: 'Sad' },
     { date: '2024-01-02', mood: '😊', label: 'Happy' },
+    { date: '2024-01-01', mood: '😄', label: 'Very Happy' },
   ];
+
+  const handleCardPress = (entry) => {
+    Alert.alert(
+      'Mood Details',
+      `On ${entry.date}, you were feeling ${entry.label} ${entry.mood}`
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -36,13 +46,13 @@ export default function HistoryScreen() {
           <Text style={styles.title}>Mood History</Text>
           
           {moodHistory.map((entry, index) => (
-            <View key={index} style={styles.historyItem}>
-              <Text style={styles.moodEmoji}>{entry.mood}</Text>
-              <View style={styles.historyText}>
-                <Text style={styles.moodLabel}>{entry.label}</Text>
-                <Text style={styles.dateText}>{entry.date}</Text>
-              </View>
-            </View>
+            <MoodCard
+              key={index}
+              mood={entry.mood}
+              date={entry.date}
+              label={entry.label}
+              onPress={() => handleCardPress(entry)}
+            />
           ))}
         </ScrollView>
       </SafeAreaView>
@@ -72,35 +82,5 @@ const createStyles = (theme) => StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
     marginTop: 20,
-  },
-  historyItem: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.card,
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  moodEmoji: {
-    fontSize: 40,
-    marginRight: 20,
-  },
-  historyText: {
-    flex: 1,
-  },
-  moodLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.text,
-    marginBottom: 4,
-  },
-  dateText: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
   },
 });

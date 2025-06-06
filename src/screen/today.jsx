@@ -9,19 +9,24 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useTheme } from '../context/theme';
-import AnimatedBackground from '../components/animations'; // Keep the floating smileys!
+import AnimatedBackground from '../components/animations';
+import MoodButton from '../components/moodbutton'; // Use your animated component!
 
 const moodOptions = [
-  { emoji: '😄', label: 'Very Happy', value: 5 },
-  { emoji: '😊', label: 'Happy', value: 4 },
-  { emoji: '😐', label: 'Neutral', value: 3 },
-  { emoji: '😔', label: 'Sad', value: 2 },
-  { emoji: '😢', label: 'Very Sad', value: 1 },
+  { emoji: '😄', label: 'Very Happy', value: 5, color: '#FFD700' },
+  { emoji: '😊', label: 'Happy', value: 4, color: '#90EE90' },
+  { emoji: '😐', label: 'Neutral', value: 3, color: '#87CEEB' },
+  { emoji: '😔', label: 'Sad', value: 2, color: '#DDA0DD' },
+  { emoji: '😢', label: 'Very Sad', value: 1, color: '#F0A0A0' },
 ];
 
 export default function TodayScreen() {
   const theme = useTheme();
   const [selectedMood, setSelectedMood] = useState(null);
+
+  const handleMoodPress = (mood) => {
+    setSelectedMood(mood);
+  };
 
   const handleSaveMood = () => {
     if (!selectedMood) {
@@ -29,7 +34,8 @@ export default function TodayScreen() {
       return;
     }
     
-    Alert.alert('Mood Saved!', `You're feeling ${selectedMood.label} today!`);
+    Alert.alert('Mood Saved!', `You're feeling ${selectedMood.label} today! 🎉`);
+    // Here you would save to your database
   };
 
   const styles = createStyles(theme);
@@ -49,17 +55,13 @@ export default function TodayScreen() {
           
           <View style={styles.moodGrid}>
             {moodOptions.map((mood, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.moodButton,
-                  selectedMood?.value === mood.value && styles.selectedMood,
-                ]}
-                onPress={() => setSelectedMood(mood)}
-              >
-                <Text style={styles.moodEmoji}>{mood.emoji}</Text>
-                <Text style={styles.moodLabel}>{mood.label}</Text>
-              </TouchableOpacity>
+              <View key={index} style={styles.moodButtonContainer}>
+                <MoodButton
+                  mood={mood}
+                  selected={selectedMood?.value === mood.value}
+                  onPress={handleMoodPress}
+                />
+              </View>
             ))}
           </View>
 
@@ -103,33 +105,9 @@ const createStyles = (theme) => StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 30,
   },
-  moodButton: {
-    width: '48%',
-    backgroundColor: theme.colors.card,
-    borderRadius: 15,
-    padding: 20,
-    alignItems: 'center',
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  selectedMood: {
-    borderWidth: 3,
-    borderColor: theme.colors.primary,
-    transform: [{ scale: 1.05 }],
-  },
-  moodEmoji: {
-    fontSize: 50,
+  moodButtonContainer: {
+    width: '48%', // Two buttons per row
     marginBottom: 10,
-  },
-  moodLabel: {
-    fontSize: 16,
-    color: theme.colors.text,
-    textAlign: 'center',
-    fontWeight: '600',
   },
   saveButton: {
     backgroundColor: theme.colors.primary,
