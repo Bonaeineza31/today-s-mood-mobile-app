@@ -8,14 +8,11 @@ import {
   Alert,
   SafeAreaView,
 } from 'react-native';
-import { useTheme } from '../context/theme';
 import { useAuth } from '../context/authcontext';
-import AnimatedBackground from '../components/animations'; // Keep floating smileys!
+import AnimatedBackground from '../components/animations';
 
 export default function ProfileScreen() {
-  const theme = useTheme();
   const { logout } = useAuth();
-  const styles = createStyles(theme);
 
   const handleLogout = () => {
     Alert.alert(
@@ -30,7 +27,6 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Keep the floating smiley background! */}
       <AnimatedBackground />
       
       <SafeAreaView style={styles.safeArea}>
@@ -39,12 +35,16 @@ export default function ProfileScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>Profile</Text>
+          <View style={styles.headerCard}>
+            <Text style={styles.headerEmoji}>👤</Text>
+            <Text style={styles.title}>Your Profile</Text>
+            <Text style={styles.subtitle}>Manage your mood journey</Text>
+          </View>
           
           <View style={styles.profileCard}>
-            <Text style={styles.profileEmoji}>👤</Text>
-            <Text style={styles.profileName}>User</Text>
-            <Text style={styles.profileEmail}>user@example.com</Text>
+            <Text style={styles.profileEmoji}>😊</Text>
+            <Text style={styles.profileName}>Mood Tracker</Text>
+            <Text style={styles.profileEmail}>user@moodsync.com</Text>
           </View>
           
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -56,10 +56,11 @@ export default function ProfileScreen() {
   );
 }
 
-const createStyles = (theme) => StyleSheet.create({
+// All styles are inline - no external spacing references
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: 'transparent',
   },
   safeArea: {
     flex: 1,
@@ -68,20 +69,39 @@ const createStyles = (theme) => StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 120, // Extra space for tab bar
+    padding: 24,
+    paddingBottom: 120,
+  },
+  headerCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 32,
+    marginBottom: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  headerEmoji: {
+    fontSize: 32,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.text,
+    color: '#2D3748',
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#718096',
     textAlign: 'center',
-    marginBottom: 30,
-    marginTop: 20,
   },
   profileCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 30,
     alignItems: 'center',
     marginBottom: 30,
@@ -98,16 +118,16 @@ const createStyles = (theme) => StyleSheet.create({
   profileName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.text,
+    color: '#2D3748',
     marginBottom: 8,
   },
   profileEmail: {
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: '#718096',
   },
   logoutButton: {
     backgroundColor: '#FF6B6B',
-    borderRadius: 15,
+    borderRadius: 16,
     paddingVertical: 18,
     alignItems: 'center',
     shadowColor: '#000',

@@ -1,133 +1,146 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  SafeAreaView,
-} from 'react-native';
-import { useTheme } from '../context/theme';
-import AnimatedBackground from '../components/animations';
-import MoodButton from '../components/moodbutton';
+"use client"
 
-const moodOptions = [
-  { emoji: '😄', label: 'Very Happy', value: 5, color: '#FFD700' },
-  { emoji: '😊', label: 'Happy', value: 4, color: '#90EE90' },
-  { emoji: '😐', label: 'Neutral', value: 3, color: '#87CEEB' },
-  { emoji: '😔', label: 'Sad', value: 2, color: '#DDA0DD' },
-  { emoji: '😢', label: 'Very Sad', value: 1, color: '#F0A0A0' },
-];
+import { useState } from "react"
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native"
+import AnimatedBackground from "../components/animations"
 
 export default function TodayScreen() {
-  const theme = useTheme();
-  const [selectedMood, setSelectedMood] = useState(null);
+  const [selectedMood, setSelectedMood] = useState(null)
 
-  const handleMoodPress = (mood) => {
-    setSelectedMood(mood);
-  };
+  const moods = [
+    { emoji: "😄", label: "Amazing", value: 5, color: "#FFD93D" },
+    { emoji: "😊", label: "Good", value: 4, color: "#6BCF7F" },
+    { emoji: "😐", label: "Okay", value: 3, color: "#74C0FC" },
+    { emoji: "😔", label: "Bad", value: 2, color: "#A78BFA" },
+    { emoji: "😢", label: "Awful", value: 1, color: "#F687B3" },
+  ]
 
-  const handleSaveMood = () => {
-    if (!selectedMood) {
-      Alert.alert('Please select a mood');
-      return;
-    }
-    
-    Alert.alert('Mood Saved!', `You're feeling ${selectedMood.label} today! 🎉`);
-  };
-
-  const styles = createStyles(theme);
+  const handleMoodSelect = (mood) => {
+    setSelectedMood(mood)
+    Alert.alert("Mood Saved! 🎉", `You're feeling ${mood.label} today.`, [{ text: "OK" }])
+  }
 
   return (
     <View style={styles.container}>
-      {/* Animated background with floating smileys */}
       <AnimatedBackground />
-      
+
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView 
-          style={styles.scrollView} 
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.title}>How are you feeling today?</Text>
-          
-          <View style={styles.moodGrid}>
-            {moodOptions.map((mood, index) => (
-              <View key={index} style={styles.moodButtonContainer}>
-                <MoodButton
-                  mood={mood}
-                  selected={selectedMood?.value === mood.value}
-                  onPress={handleMoodPress}
-                />
-              </View>
+        <View style={styles.content}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.title}>How are you feeling today?</Text>
+            <Text style={styles.subtitle}>Choose your mood</Text>
+          </View>
+
+          {/* Mood Buttons */}
+          <View style={styles.moodContainer}>
+            {moods.map((mood, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.moodButton,
+                  { backgroundColor: mood.color },
+                  selectedMood?.value === mood.value && styles.selectedMood,
+                ]}
+                onPress={() => handleMoodSelect(mood)}
+              >
+                <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+                <Text style={styles.moodLabel}>{mood.label}</Text>
+              </TouchableOpacity>
             ))}
           </View>
 
+          {/* Selected Mood Display */}
           {selectedMood && (
-            <TouchableOpacity style={styles.saveButton} onPress={handleSaveMood}>
-              <Text style={styles.saveButtonText}>Save Mood</Text>
-            </TouchableOpacity>
+            <View style={styles.selectedContainer}>
+              <Text style={styles.selectedText}>
+                Today you're feeling: {selectedMood.emoji} {selectedMood.label}
+              </Text>
+            </View>
           )}
-        </ScrollView>
+        </View>
       </SafeAreaView>
     </View>
-  );
+  )
 }
 
-const createStyles = (theme) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Let the animated background show through
+    backgroundColor: "transparent",
   },
   safeArea: {
     flex: 1,
-    backgroundColor: 'transparent',
   },
-  scrollView: {
+  content: {
     flex: 1,
-    backgroundColor: 'transparent',
-  },
-  scrollContent: {
     padding: 20,
-    paddingBottom: 120,
+    justifyContent: "center",
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 40,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 30,
-    marginTop: 20,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#2D3748",
+    textAlign: "center",
+    marginBottom: 8,
   },
-  moodGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 30,
+  subtitle: {
+    fontSize: 16,
+    color: "#718096",
+    textAlign: "center",
   },
-  moodButtonContainer: {
-    width: '48%',
-    marginBottom: 10,
+  moodContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 15,
   },
-  saveButton: {
-    backgroundColor: '#FFD700',
-    borderRadius: 15,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+  moodButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  selectedMood: {
+    transform: [{ scale: 1.1 }],
+    shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 5,
   },
-  saveButtonText: {
-    color: 'white',
+  moodEmoji: {
+    fontSize: 32,
+    marginBottom: 4,
+  },
+  moodLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#2D3748",
+  },
+  selectedContainer: {
+    marginTop: 40,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  selectedText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "600",
+    color: "#2D3748",
+    textAlign: "center",
   },
-});
+})

@@ -1,208 +1,110 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import { useTheme } from '../context/theme';
-import { useAuth } from '../context/authcontext';
-import { router } from 'expo-router';
-import AnimatedBackground from '../components/animations';
+"use client"
 
-export default function LoginScreen() {
-  const theme = useTheme();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [loading, setLoading] = useState(false);
+import { useState } from "react"
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native"
 
-  const handleLogin = async () => {
-    if (!formData.email || !formData.password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+export default function TodayScreen() {
+  const [selectedMood, setSelectedMood] = useState(null)
 
-    setLoading(true);
-    
-    try {
-      const result = await login(formData.email, formData.password);
-      
-      if (result.success) {
-        // Navigate to main app
-        router.replace('/main');
-      } else {
-        Alert.alert('Login Failed', result.error || 'Please check your credentials');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const moods = [
+    { emoji: "😄", label: "Great", color: "#FFD93D" },
+    { emoji: "😊", label: "Good", color: "#6BCF7F" },
+    { emoji: "😐", label: "Okay", color: "#74C0FC" },
+    { emoji: "😔", label: "Bad", color: "#A78BFA" },
+    { emoji: "😢", label: "Awful", color: "#F687B3" },
+  ]
 
-  const styles = createStyles(theme);
+  const handleMoodSelect = (mood) => {
+    setSelectedMood(mood)
+    Alert.alert("Mood Saved!", `You're feeling ${mood.label} today.`)
+  }
 
   return (
-    <View style={styles.container}>
-      <AnimatedBackground />
-      
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.content}>
-            
-            {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.title}>MoodSync</Text>
-              <Text style={styles.subtitle}>
-                Track your daily moods and emotions 😊
-              </Text>
-            </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>How are you feeling today?</Text>
 
-            {/* Form */}
-            <View style={styles.form}>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#666"
-                value={formData.email}
-                onChangeText={(text) => setFormData({...formData, email: text})}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                editable={!loading}
-              />
-              
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#666"
-                value={formData.password}
-                onChangeText={(text) => setFormData({...formData, password: text})}
-                secureTextEntry
-                editable={!loading}
-              />
+        <View style={styles.moodContainer}>
+          {moods.map((mood, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.moodButton,
+                { backgroundColor: mood.color },
+                selectedMood?.label === mood.label && styles.selected,
+              ]}
+              onPress={() => handleMoodSelect(mood)}
+            >
+              <Text style={styles.emoji}>{mood.emoji}</Text>
+              <Text style={styles.label}>{mood.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-              <TouchableOpacity 
-                style={[styles.button, loading && styles.buttonDisabled]} 
-                onPress={handleLogin}
-                disabled={loading}
-              >
-                <Text style={styles.buttonText}>
-                  {loading ? 'Logging in...' : 'Login'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.switchButton}
-                onPress={() => router.push('/register')}
-                disabled={loading}
-              >
-                <Text style={styles.switchText}>
-                  Don't have an account? Sign Up
-                </Text>
-              </TouchableOpacity>
-            </View>
-
+        {selectedMood && (
+          <View style={styles.result}>
+            <Text style={styles.resultText}>
+              Today: {selectedMood.emoji} {selectedMood.label}
+            </Text>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
-  );
+        )}
+      </View>
+    </SafeAreaView>
+  )
 }
 
-const createStyles = (theme) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
+    backgroundColor: "#F7FAFC",
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 30,
-    paddingVertical: 50,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 50,
+    padding: 20,
+    justifyContent: "center",
   },
   title: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-    textShadowColor: 'rgba(255,255,255,0.8)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 40,
+    color: "#2D3748",
   },
-  subtitle: {
-    fontSize: 18,
-    color: '#666',
-    textAlign: 'center',
-    fontWeight: '500',
+  moodContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: 15,
   },
-  form: {
-    width: '100%',
+  moodButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    margin: 5,
   },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
+  selected: {
+    transform: [{ scale: 1.1 }],
+  },
+  emoji: {
+    fontSize: 30,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#2D3748",
+  },
+  result: {
+    marginTop: 40,
+    backgroundColor: "white",
+    padding: 20,
     borderRadius: 15,
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    alignItems: "center",
   },
-  button: {
-    backgroundColor: '#FFD700',
-    borderRadius: 15,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  buttonDisabled: {
-    backgroundColor: '#CCC',
-  },
-  buttonText: {
-    color: 'white',
+  resultText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "600",
+    color: "#2D3748",
   },
-  switchButton: {
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  switchText: {
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
+})

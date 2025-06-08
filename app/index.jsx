@@ -10,29 +10,25 @@ export default function IndexScreen() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-      
+        // User is logged in, go to main app
         router.replace('/main');
       } else {
-      
+        // User is not logged in, go to login
         router.replace('/login');
       }
     }
   }, [user, loading]);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <AnimatedBackground />
-        <View style={styles.loadingContainer}>
-          <Text style={styles.title}>MoodSync</Text>
-          <ActivityIndicator size="large" color="#FFD700" style={styles.loader} />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+  return (
+    <View style={styles.container}>
+      <AnimatedBackground />
+      <View style={styles.loadingContainer}>
+        <Text style={styles.title}>MoodSync</Text>
+        <ActivityIndicator size="large" color="#FFD700" style={styles.loader} />
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
-    );
-  }
-
-  return null; 
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
