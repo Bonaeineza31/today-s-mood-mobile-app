@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check if user is logged in on app start
   useEffect(() => {
     checkAuthState();
   }, []);
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(userData));
       }
     } catch (error) {
-      console.error('Error checking auth state:', error);
+      console.log('Error checking auth state:', error);
     } finally {
       setLoading(false);
     }
@@ -34,37 +35,61 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      setLoading(true);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simple validation (in real app, this would be API call)
       if (email && password) {
-        const userData = { 
-          id: Date.now().toString(), 
-          email, 
-          name: email.split('@')[0] 
+        const userData = {
+          id: 1,
+          email: email,
+          name: 'User',
         };
+        
+        // Save to AsyncStorage
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
+        
         return { success: true };
+      } else {
+        return { success: false, error: 'Invalid credentials' };
       }
-      return { success: false, error: 'Please enter email and password' };
     } catch (error) {
       return { success: false, error: 'Login failed' };
+    } finally {
+      setLoading(false);
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (email, password, name) => {
     try {
-      if (name && email && password) {
-        const userData = { 
-          id: Date.now().toString(), 
-          email, 
-          name 
+      setLoading(true);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simple validation
+      if (email && password && name) {
+        const userData = {
+          id: 1,
+          email: email,
+          name: name,
         };
+        
+        // Save to AsyncStorage
         await AsyncStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
+        
         return { success: true };
+      } else {
+        return { success: false, error: 'All fields are required' };
       }
-      return { success: false, error: 'Please fill all fields' };
     } catch (error) {
       return { success: false, error: 'Registration failed' };
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,22 +98,20 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.removeItem('user');
       setUser(null);
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.log('Error logging out:', error);
     }
   };
 
-  if (loading) {
-    return null; // or a loading screen
-  }
+  const value = {
+    user,
+    login,
+    register,
+    logout,
+    loading,
+  };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      loading,
-      login,
-      register,
-      logout
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

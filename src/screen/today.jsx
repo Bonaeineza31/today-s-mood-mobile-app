@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../context/theme';
 import AnimatedBackground from '../components/animations';
-import MoodButton from '../components/moodbutton'; // Use your animated component!
+import MoodButton from '../components/moodbutton';
 
 const moodOptions = [
   { emoji: '😄', label: 'Very Happy', value: 5, color: '#FFD700' },
@@ -35,14 +35,13 @@ export default function TodayScreen() {
     }
     
     Alert.alert('Mood Saved!', `You're feeling ${selectedMood.label} today! 🎉`);
-    // Here you would save to your database
   };
 
   const styles = createStyles(theme);
 
   return (
     <View style={styles.container}>
-      {/* Keep the floating smiley background! */}
+      {/* Animated background with floating smileys */}
       <AnimatedBackground />
       
       <SafeAreaView style={styles.safeArea}>
@@ -79,25 +78,30 @@ export default function TodayScreen() {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: 'transparent', // Let the animated background show through
   },
   safeArea: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollView: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollContent: {
     padding: 20,
-    paddingBottom: 120, // Extra space for tab bar
+    paddingBottom: 120,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: theme.colors.text,
+    color: '#333',
     textAlign: 'center',
     marginBottom: 30,
     marginTop: 20,
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   moodGrid: {
     flexDirection: 'row',
@@ -106,11 +110,11 @@ const createStyles = (theme) => StyleSheet.create({
     marginBottom: 30,
   },
   moodButtonContainer: {
-    width: '48%', // Two buttons per row
+    width: '48%',
     marginBottom: 10,
   },
   saveButton: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#FFD700',
     borderRadius: 15,
     paddingVertical: 18,
     alignItems: 'center',

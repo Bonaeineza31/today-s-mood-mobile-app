@@ -31,13 +31,20 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    const result = await login(formData.email, formData.password);
-    setLoading(false);
-
-    if (result.success) {
-      router.replace('/main');
-    } else {
-      Alert.alert('Login Failed', result.error || 'Please check your credentials');
+    
+    try {
+      const result = await login(formData.email, formData.password);
+      
+      if (result.success) {
+        // Navigate to main app
+        router.replace('/main');
+      } else {
+        Alert.alert('Login Failed', result.error || 'Please check your credentials');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,24 +74,26 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Email"
-                placeholderTextColor={theme.colors.textSecondary}
+                placeholderTextColor="#666"
                 value={formData.email}
                 onChangeText={(text) => setFormData({...formData, email: text})}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                editable={!loading}
               />
               
               <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor={theme.colors.textSecondary}
+                placeholderTextColor="#666"
                 value={formData.password}
                 onChangeText={(text) => setFormData({...formData, password: text})}
                 secureTextEntry
+                editable={!loading}
               />
 
               <TouchableOpacity 
-                style={styles.button} 
+                style={[styles.button, loading && styles.buttonDisabled]} 
                 onPress={handleLogin}
                 disabled={loading}
               >
@@ -96,6 +105,7 @@ export default function LoginScreen() {
               <TouchableOpacity
                 style={styles.switchButton}
                 onPress={() => router.push('/register')}
+                disabled={loading}
               >
                 <Text style={styles.switchText}>
                   Don't have an account? Sign Up
@@ -113,7 +123,7 @@ export default function LoginScreen() {
 const createStyles = (theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: 'transparent',
   },
   keyboardView: {
     flex: 1,
@@ -135,15 +145,15 @@ const createStyles = (theme) => StyleSheet.create({
   title: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: theme.colors.text,
+    color: '#333',
     marginBottom: 10,
-    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowColor: 'rgba(255,255,255,0.8)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
   subtitle: {
     fontSize: 18,
-    color: theme.colors.textSecondary,
+    color: '#666',
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -151,14 +161,14 @@ const createStyles = (theme) => StyleSheet.create({
     width: '100%',
   },
   input: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: 'white',
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: '#E0E0E0',
     borderRadius: 15,
     paddingHorizontal: 20,
     paddingVertical: 15,
     fontSize: 16,
-    color: theme.colors.text,
+    color: '#333',
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -167,7 +177,7 @@ const createStyles = (theme) => StyleSheet.create({
     elevation: 3,
   },
   button: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#FFD700',
     borderRadius: 15,
     paddingVertical: 18,
     alignItems: 'center',
@@ -177,6 +187,9 @@ const createStyles = (theme) => StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
+  },
+  buttonDisabled: {
+    backgroundColor: '#CCC',
   },
   buttonText: {
     color: 'white',
@@ -188,7 +201,7 @@ const createStyles = (theme) => StyleSheet.create({
     alignItems: 'center',
   },
   switchText: {
-    color: theme.colors.textSecondary,
+    color: '#666',
     fontSize: 16,
     fontWeight: '500',
   },
