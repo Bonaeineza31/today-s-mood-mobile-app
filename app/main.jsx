@@ -1,13 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../src/context/theme';
 import { Platform } from 'react-native';
 
 // Import your screens
 import TodayScreen from '../src/screen/today';
 import HistoryScreen from '../src/screen/history';
-import StatsScreen from '../src/screen/stat';
+import StatsScreen from '../src/screen/stats';
 import ProfileScreen from '../src/screen/profile';
 
 const Tab = createBottomTabNavigator();
@@ -20,34 +20,39 @@ export default function MainScreen() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
+          let IconComponent;
           
           if (route.name === 'Today') {
-            iconName = focused ? 'happy' : 'happy-outline';
+            IconComponent = MaterialCommunityIcons;
+            iconName = focused ? 'emoticon-happy' : 'emoticon-happy-outline';
           } else if (route.name === 'History') {
-            iconName = focused ? 'time' : 'time-outline';
+            IconComponent = Feather;
+            iconName = 'calendar';
           } else if (route.name === 'Stats') {
-            iconName = focused ? 'bar-chart' : 'bar-chart-outline';
+            IconComponent = Feather;
+            iconName = 'trending-up';
           } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
+            IconComponent = Feather;
+            iconName = 'user';
           }
           
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return <IconComponent name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarActiveTintColor: '#6C63FF',
+        tabBarInactiveTintColor: '#A0AEC0',
         tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.border,
+          backgroundColor: '#FFFFFF',
+          borderTopColor: '#E2E8F0',
           borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 85 : 65, // Taller for better accessibility
+          height: Platform.OS === 'ios' ? 85 : 65,
           paddingBottom: Platform.OS === 'ios' ? 25 : 10,
           paddingTop: 10,
-          position: 'absolute', // Make sure it's always on top
+          position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
-          elevation: 10, // Android shadow
-          shadowColor: '#000', // iOS shadow
+          elevation: 10,
+          shadowColor: '#000',
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
           shadowRadius: 4,
@@ -56,13 +61,32 @@ export default function MainScreen() {
           fontSize: 12,
           fontWeight: '600',
         },
-        headerShown: false, // Remove header to avoid conflicts
+        headerShown: false,
       })}
     >
-      <Tab.Screen name="Today" component={TodayScreen} />
-      <Tab.Screen name="History" component={HistoryScreen} />
-      <Tab.Screen name="Stats" component={StatsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen 
+        name="Today" 
+        component={TodayScreen}
+        options={{ 
+          tabBarLabel: 'Today',
+          tabBarBadge: undefined, // Can add notification badges here
+        }}
+      />
+      <Tab.Screen 
+        name="History" 
+        component={HistoryScreen}
+        options={{ tabBarLabel: 'History' }}
+      />
+      <Tab.Screen 
+        name="Stats" 
+        component={StatsScreen}
+        options={{ tabBarLabel: 'Insights' }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen}
+        options={{ tabBarLabel: 'Profile' }}
+      />
     </Tab.Navigator>
   );
 }

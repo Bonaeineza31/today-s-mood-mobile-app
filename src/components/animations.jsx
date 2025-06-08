@@ -8,13 +8,12 @@ const BouncingSmiley = ({ emoji, delay = 0 }) => {
   const translateY = useRef(new Animated.Value(Math.random() * (height - 200))).current;
   const scale = useRef(new Animated.Value(0.5 + Math.random() * 0.5)).current;
   
-  // Fix: Keep these as ref objects, don't call .current
-  const directionX = useRef((Math.random() - 0.5) * 2); // -1 to 1
-  const directionY = useRef((Math.random() - 0.5) * 2); // -1 to 1
+  const directionX = useRef((Math.random() - 0.5) * 2);
+  const directionY = useRef((Math.random() - 0.5) * 2); 
   
   useEffect(() => {
     const animateBouncing = () => {
-      const duration = 2000 + Math.random() * 1000; // 2-3 seconds per movement
+      const duration = 2000 + Math.random() * 1000; 
       
       // Calculate next position
       const currentX = translateX._value;
@@ -82,15 +81,15 @@ export default function AnimatedBackground() {
   return (
     <View style={styles.container} pointerEvents="none">
       {/* Create bouncing smileys */}
-      {Array.from({ length: 12 }, (_, index) => (
+      {Array.from({ length: 20 }, (_, index) => (
         <BouncingSmiley
           key={index}
           emoji={smileys[index % smileys.length]}
-          delay={index * 500} // Stagger the start times
+          delay={index * 500} 
         />
       ))}
       
-      {/* Background gradient */}
+      
       <View style={styles.gradientOverlay} />
     </View>
   );

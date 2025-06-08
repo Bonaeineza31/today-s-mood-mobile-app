@@ -10,10 +10,10 @@ export default function IndexScreen() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        // User is logged in, go to main app
+      
         router.replace('/main');
       } else {
-        // User is not logged in, go to login
+      
         router.replace('/login');
       }
     }
@@ -32,7 +32,7 @@ export default function IndexScreen() {
     );
   }
 
-  return null; // This will be replaced by navigation
+  return null; 
 }
 
 const styles = StyleSheet.create({

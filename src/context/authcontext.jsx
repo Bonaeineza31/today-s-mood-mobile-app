@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in on app start
   useEffect(() => {
     checkAuthState();
   }, []);
@@ -37,10 +36,10 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // Simulate API call delay
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simple validation (in real app, this would be API call)
+      
       if (email && password) {
         const userData = {
           id: 1,
@@ -67,10 +66,8 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simple validation
       if (email && password && name) {
         const userData = {
           id: 1,

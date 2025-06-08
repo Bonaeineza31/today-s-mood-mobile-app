@@ -22,7 +22,6 @@ export default function RootLayout() {
             name="main" 
             options={{ 
               headerShown: false,
-              // This prevents gesture navigation which might conflict with tab navigation
               gestureEnabled: false 
             }} 
           />
