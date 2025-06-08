@@ -1,8 +1,8 @@
-"use client"
 
 import { useState } from "react"
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native"
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, ScrollView } from "react-native"
 import AnimatedBackground from "../components/animations"
+import { router } from "expo-router"
 
 export default function TodayScreen() {
   const [selectedMood, setSelectedMood] = useState(null)
@@ -11,13 +11,30 @@ export default function TodayScreen() {
     { emoji: "😄", label: "Amazing", value: 5, color: "#FFD93D" },
     { emoji: "😊", label: "Good", value: 4, color: "#6BCF7F" },
     { emoji: "😐", label: "Okay", value: 3, color: "#74C0FC" },
-    { emoji: "😔", label: "Bad", value: 2, color: "#A78BFA" },
-    { emoji: "😢", label: "Awful", value: 1, color: "#F687B3" },
+    { emoji: "😔", label: "Not Great", value: 2, color: "#A78BFA" },
+    { emoji: "😢", label: "Complicated", value: 1, color: "#F687B3" },
   ]
 
   const handleMoodSelect = (mood) => {
     setSelectedMood(mood)
-    Alert.alert("Mood Saved! 🎉", `You're feeling ${mood.label} today.`, [{ text: "OK" }])
+
+    // Show different responses based on mood
+    if (mood.value <= 2) {
+      Alert.alert(
+        "I hear you 💙",
+        `It sounds like you're feeling ${mood.label.toLowerCase()}. Would you like to talk about it?`,
+        [
+          { text: "Not now", style: "cancel" },
+          { text: "Yes, let's chat", onPress: () => router.push("/chat") },
+        ],
+      )
+    } else {
+      Alert.alert(
+        "That's wonderful! 🌟",
+        `You're feeling ${mood.label.toLowerCase()} today. Keep that positive energy!`,
+        [{ text: "Thanks!" }],
+      )
+    }
   }
 
   return (
@@ -25,14 +42,25 @@ export default function TodayScreen() {
       <AnimatedBackground />
 
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>How are you feeling today?</Text>
-            <Text style={styles.subtitle}>Choose your mood</Text>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Welcome Header */}
+          <View style={styles.welcomeCard}>
+            <Text style={styles.welcomeEmoji}>🏠</Text>
+            <Text style={styles.welcomeTitle}>Welcome Home</Text>
+            <Text style={styles.welcomeSubtitle}>Take a moment to check in with yourself</Text>
           </View>
 
-          {/* Mood Buttons */}
+          {/* Mood Question */}
+          <View style={styles.questionCard}>
+            <Text style={styles.questionText}>How are you feeling right now?</Text>
+            <Text style={styles.questionSubtext}>It's okay to not be okay. I'm here to listen. Trust me I won't judge</Text>
+          </View>
+
+          {/* Mood Selection */}
           <View style={styles.moodContainer}>
             {moods.map((mood, index) => (
               <TouchableOpacity
@@ -56,9 +84,21 @@ export default function TodayScreen() {
               <Text style={styles.selectedText}>
                 Today you're feeling: {selectedMood.emoji} {selectedMood.label}
               </Text>
+              <TouchableOpacity style={styles.chatButton} onPress={() => router.push("/chat")}>
+                <Text style={styles.chatButtonText}>Want to talk about it? 💬</Text>
+              </TouchableOpacity>
             </View>
           )}
-        </View>
+
+          {/* Encouragement */}
+          <View style={styles.encouragementCard}>
+            <Text style={styles.encouragementEmoji}>🌱</Text>
+            <Text style={styles.encouragementTitle}>You're Not Alone</Text>
+            <Text style={styles.encouragementText}>
+              Every feeling is valid. Taking time to acknowledge your emotions is a sign of strength.
+            </Text>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   )
@@ -72,64 +112,104 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     padding: 20,
-    justifyContent: "center",
+    paddingBottom: 120,
   },
-  header: {
+  welcomeCard: {
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 24,
+    padding: 32,
+    marginBottom: 24,
     alignItems: "center",
-    marginBottom: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  title: {
-    fontSize: 24,
+  welcomeEmoji: {
+    fontSize: 40,
+    marginBottom: 12,
+  },
+  welcomeTitle: {
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#2D3748",
+    marginBottom: 8,
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: "#718096",
+    textAlign: "center",
+  },
+  questionCard: {
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  questionText: {
+    fontSize: 22,
+    fontWeight: "600",
     color: "#2D3748",
     textAlign: "center",
     marginBottom: 8,
   },
-  subtitle: {
+  questionSubtext: {
     fontSize: 16,
     color: "#718096",
     textAlign: "center",
+    fontStyle: "italic",
   },
   moodContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    gap: 15,
+    gap: 16,
+    marginBottom: 24,
   },
   moodButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowRadius: 6,
+    elevation: 6,
   },
   selectedMood: {
-    transform: [{ scale: 1.1 }],
+    transform: [{ scale: 1.15 }],
     shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowRadius: 8,
   },
   moodEmoji: {
-    fontSize: 32,
+    fontSize: 36,
     marginBottom: 4,
   },
   moodLabel: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#2D3748",
+    textAlign: "center",
   },
   selectedContainer: {
-    marginTop: 40,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -142,5 +222,44 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#2D3748",
     textAlign: "center",
+    marginBottom: 16,
+  },
+  chatButton: {
+    backgroundColor: "#6C63FF",
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+  },
+  chatButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  encouragementCard: {
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 20,
+    padding: 24,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  encouragementEmoji: {
+    fontSize: 32,
+    marginBottom: 12,
+  },
+  encouragementTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#2D3748",
+    marginBottom: 8,
+  },
+  encouragementText: {
+    fontSize: 16,
+    color: "#718096",
+    textAlign: "center",
+    lineHeight: 24,
   },
 })

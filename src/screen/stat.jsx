@@ -1,21 +1,16 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
-import AnimatedBackground from '../components/animations';
+"use client"
+
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native"
+import AnimatedBackground from "../components/animations"
 
 export default function StatsScreen() {
   return (
     <View style={styles.container}>
       <AnimatedBackground />
-      
+
       <SafeAreaView style={styles.safeArea}>
-        <ScrollView 
-          style={styles.scrollView} 
+        <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -24,19 +19,19 @@ export default function StatsScreen() {
             <Text style={styles.title}>Mood Insights</Text>
             <Text style={styles.subtitle}>Your emotional patterns</Text>
           </View>
-          
+
           <View style={styles.statCard}>
             <Text style={styles.statEmoji}>😊</Text>
             <Text style={styles.statTitle}>Most Common Mood</Text>
             <Text style={styles.statValue}>Happy</Text>
           </View>
-          
+
           <View style={styles.statCard}>
             <Text style={styles.statEmoji}>📈</Text>
             <Text style={styles.statTitle}>Average Mood</Text>
             <Text style={styles.statValue}>4.2 / 5.0</Text>
           </View>
-          
+
           <View style={styles.statCard}>
             <Text style={styles.statEmoji}>🔥</Text>
             <Text style={styles.statTitle}>Current Streak</Text>
@@ -45,13 +40,13 @@ export default function StatsScreen() {
         </ScrollView>
       </SafeAreaView>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   safeArea: {
     flex: 1,
@@ -64,12 +59,12 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   headerCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 32,
     marginBottom: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -81,22 +76,22 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2D3748',
+    fontWeight: "bold",
+    color: "#2D3748",
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 16,
-    color: '#718096',
-    textAlign: 'center',
+    color: "#718096",
+    textAlign: "center",
   },
   statCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 25,
     marginBottom: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -108,13 +103,13 @@ const styles = StyleSheet.create({
   },
   statTitle: {
     fontSize: 16,
-    color: '#718096',
+    color: "#718096",
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   statValue: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2D3748',
+    fontWeight: "bold",
+    color: "#2D3748",
   },
-});
+})

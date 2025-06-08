@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons"
 import { Platform } from "react-native"
 
-// Import screens
+// Import screens - Fixed the stats import
 import TodayScreen from "../src/screen/today"
 import ChatScreen from "../src/screen/chat"
 import HistoryScreen from "../src/screen/history"
@@ -41,21 +41,21 @@ export default function Main() {
         tabBarActiveTintColor: "#6C63FF",
         tabBarInactiveTintColor: "#A0AEC0",
         tabBarStyle: {
-          backgroundColor: "#FFFFFF",
-          borderTopColor: "#E2E8F0",
+          backgroundColor: "rgba(255,255,255,0.95)",
+          borderTopColor: "rgba(226,232,240,0.8)",
           borderTopWidth: 1,
-          height: Platform.OS === "ios" ? 85 : 65,
-          paddingBottom: Platform.OS === "ios" ? 25 : 10,
+          height: Platform.OS === "ios" ? 85 : 70,
+          paddingBottom: Platform.OS === "ios" ? 25 : 15,
           paddingTop: 10,
           position: "absolute",
           bottom: 0,
           left: 0,
           right: 0,
-          elevation: 10,
+          elevation: 20,
           shadowColor: "#000",
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.15,
+          shadowRadius: 8,
         },
         tabBarLabelStyle: {
           fontSize: 12,
@@ -64,11 +64,17 @@ export default function Main() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Today" component={TodayScreen} />
-      <Tab.Screen name="Chat" component={ChatScreen} />
-      <Tab.Screen name="History" component={HistoryScreen} />
-      <Tab.Screen name="Stats" component={StatsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen
+        name="Today"
+        component={TodayScreen}
+        options={{
+          tabBarLabel: "Today",
+        }}
+      />
+      <Tab.Screen name="Chat" component={ChatScreen} options={{ tabBarLabel: "Chat" }} />
+      <Tab.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: "History" }} />
+      <Tab.Screen name="Stats" component={StatsScreen} options={{ tabBarLabel: "Insights" }} />
+      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: "Profile" }} />
     </Tab.Navigator>
   )
 }

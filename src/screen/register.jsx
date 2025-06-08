@@ -1,204 +1,217 @@
-import React, { useState } from 'react';
+"use client"
+
+import { useState } from "react"
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,  // This should be from 'react-native', not from "@/components/ui/alert"
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from 'react-native';
-import { useTheme } from '../context/theme';
-import { useAuth } from '../context/authcontext';
-import { router } from 'expo-router';  // This should be from 'expo-router', not 'next/navigation'
-import AnimatedBackground from '../components/animations';
+} from "react-native"
+import { useAuth } from "../context/authcontext"
+import { router } from "expo-router"
+import AnimatedBackground from "../components/animations"
 
 export default function RegisterScreen() {
-  const theme = useTheme();
-  const { register } = useAuth();
+  const { register } = useAuth()
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-  const [loading, setLoading] = useState(false);
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  })
+  const [loading, setLoading] = useState(false)
 
   const handleRegister = async () => {
-    if (!formData.name || !formData.email || !formData.password) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields")
+      return
     }
 
-    setLoading(true);
-    const result = await register(formData.name, formData.email, formData.password);
-    setLoading(false);
-
-    if (result.success) {
-      router.replace('/main');
-    } else {
-      Alert.alert('Registration Failed', result.error || 'Please try again');
+    if (formData.password !== formData.confirmPassword) {
+      Alert.alert("Error", "Passwords do not match")
+      return
     }
-  };
 
-  const styles = createStyles(theme);
+    setLoading(true)
+
+    try {
+      const result = await register(formData.name, formData.email, formData.password)
+
+      if (result.success) {
+        router.replace("/main")
+      } else {
+        Alert.alert("Registration Failed", result.error || "Please try again")
+      }
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong. Please try again.")
+      console.log("Registration error:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <AnimatedBackground />
-      
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
+
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.content}>
-            
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.title}>Join MoodSync</Text>
-              <Text style={styles.subtitle}>
-                Start tracking your moods today! 🌟
-              </Text>
+              <Text style={styles.subtitle}>Start your emotional wellness journey</Text>
             </View>
 
             {/* Form */}
             <View style={styles.form}>
               <TextInput
                 style={styles.input}
-                placeholder="Your Name"
-                placeholderTextColor={theme.colors.textSecondary}
+                placeholder="Full Name"
+                placeholderTextColor="#666"
                 value={formData.name}
-                onChangeText={(text) => setFormData({...formData, name: text})}
+                onChangeText={(text) => setFormData({ ...formData, name: text })}
+                editable={!loading}
               />
 
               <TextInput
                 style={styles.input}
                 placeholder="Email"
-                placeholderTextColor={theme.colors.textSecondary}
+                placeholderTextColor="#666"
                 value={formData.email}
-                onChangeText={(text) => setFormData({...formData, email: text})}
+                onChangeText={(text) => setFormData({ ...formData, email: text })}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                editable={!loading}
               />
-              
+
               <TextInput
                 style={styles.input}
                 placeholder="Password"
-                placeholderTextColor={theme.colors.textSecondary}
+                placeholderTextColor="#666"
                 value={formData.password}
-                onChangeText={(text) => setFormData({...formData, password: text})}
+                onChangeText={(text) => setFormData({ ...formData, password: text })}
                 secureTextEntry
+                editable={!loading}
               />
 
-              <TouchableOpacity 
-                style={styles.button} 
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor="#666"
+                value={formData.confirmPassword}
+                onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
+                secureTextEntry
+                editable={!loading}
+              />
+
+              <TouchableOpacity
+                style={[styles.button, loading && styles.buttonDisabled]}
                 onPress={handleRegister}
                 disabled={loading}
               >
-                <Text style={styles.buttonText}>
-                  {loading ? 'Creating Account...' : 'Sign Up'}
-                </Text>
+                <Text style={styles.buttonText}>{loading ? "Creating Account..." : "Sign Up"}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.switchButton}
-                onPress={() => router.push('/login')}
-              >
-                <Text style={styles.switchText}>
-                  Already have an account? Login
-                </Text>
+              <TouchableOpacity style={styles.switchButton} onPress={() => router.push("/login")} disabled={loading}>
+                <Text style={styles.switchText}>Already have an account? Login</Text>
               </TouchableOpacity>
             </View>
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
-  );
+  )
 }
 
-const createStyles = (theme) => StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: "transparent",
   },
   keyboardView: {
     flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 30,
     paddingVertical: 50,
   },
   header: {
-    alignItems: 'center',
-    marginBottom: 50,
+    alignItems: "center",
+    marginBottom: 40,
   },
   title: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: theme.colors.text,
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 10,
-    textShadowColor: 'rgba(0,0,0,0.1)',
+    textShadowColor: "rgba(255,255,255,0.8)",
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
   subtitle: {
     fontSize: 18,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    fontWeight: '500',
+    color: "#666",
+    textAlign: "center",
+    fontWeight: "500",
   },
   form: {
-    width: '100%',
+    width: "100%",
   },
   input: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: "white",
     borderWidth: 2,
-    borderColor: theme.colors.border,
+    borderColor: "#E0E0E0",
     borderRadius: 15,
     paddingHorizontal: 20,
     paddingVertical: 15,
     fontSize: 16,
-    color: theme.colors.text,
+    color: "#333",
     marginBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   button: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: "#6C63FF",
     borderRadius: 15,
     paddingVertical: 18,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 5,
   },
+  buttonDisabled: {
+    backgroundColor: "#CCC",
+  },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   switchButton: {
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   switchText: {
-    color: theme.colors.textSecondary,
+    color: "#666",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
-});
+})

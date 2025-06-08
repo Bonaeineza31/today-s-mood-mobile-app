@@ -1,20 +1,21 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Animated, Dimensions, StyleSheet } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+import { useEffect, useRef } from "react"
+import { View, Animated, Dimensions, StyleSheet } from "react-native"
+
+const { width, height } = Dimensions.get("window")
 
 const FloatingSmiley = ({ emoji, delay = 0 }) => {
-  const translateY = useRef(new Animated.Value(-50)).current;
-  const translateX = useRef(new Animated.Value(Math.random() * (width - 50))).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const scale = useRef(new Animated.Value(0.5 + Math.random() * 0.5)).current;
+  const translateY = useRef(new Animated.Value(-50)).current
+  const translateX = useRef(new Animated.Value(Math.random() * (width - 50))).current
+  const opacity = useRef(new Animated.Value(0)).current
+  const scale = useRef(new Animated.Value(0.5 + Math.random() * 0.5)).current
 
   useEffect(() => {
     const startFloating = () => {
       // Reset to top
-      translateY.setValue(-50);
-      translateX.setValue(Math.random() * (width - 50));
-      opacity.setValue(0);
+      translateY.setValue(-50)
+      translateX.setValue(Math.random() * (width - 50))
+      opacity.setValue(0)
 
       // Start floating down
       Animated.parallel([
@@ -53,40 +54,36 @@ const FloatingSmiley = ({ emoji, delay = 0 }) => {
               duration: 2000,
               useNativeDriver: true,
             }),
-          ])
+          ]),
         ),
       ]).start(() => {
         // Restart the animation
-        startFloating();
-      });
-    };
+        startFloating()
+      })
+    }
 
-    const timer = setTimeout(startFloating, delay);
-    return () => clearTimeout(timer);
-  }, []);
+    const timer = setTimeout(startFloating, delay)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <Animated.Text
       style={[
         styles.floatingSmiley,
         {
-          transform: [
-            { translateX },
-            { translateY },
-            { scale },
-          ],
+          transform: [{ translateX }, { translateY }, { scale }],
           opacity,
         },
       ]}
     >
       {emoji}
     </Animated.Text>
-  );
-};
+  )
+}
 
 export default function AnimatedBackground() {
-  const smileys = ['😊', '😄', '🥰', '😍', '🤗', '😎', '🥳', '😇', '🙂', '😋', '💝', '🌟', '✨', '🌈'];
-  
+  const smileys = ["😊", "😄", "🥰", "😍", "🤗", "😎", "🥳", "😇", "🙂", "😋", "💝", "🌟", "✨", "🌈"]
+
   return (
     <View style={styles.container} pointerEvents="none">
       {Array.from({ length: 12 }, (_, index) => (
@@ -99,28 +96,28 @@ export default function AnimatedBackground() {
       {/* React Native compatible background */}
       <View style={styles.gradientOverlay} />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#E6F3FF', // Light blue - React Native compatible
+    backgroundColor: "#E6F3FF", // Light blue - React Native compatible
   },
   floatingSmiley: {
-    position: 'absolute',
+    position: "absolute",
     fontSize: 30,
   },
   gradientOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
-});
+})
