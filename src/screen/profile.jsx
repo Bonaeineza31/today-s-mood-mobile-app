@@ -1,16 +1,22 @@
-"use client"
-
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, SafeAreaView } from "react-native"
 import { useAuth } from "../context/authcontext"
+import { router } from "expo-router" // Add this import
 import AnimatedBackground from "../components/animations"
 
 export default function ProfileScreen() {
   const { logout } = useAuth()
 
+  // Replace the handleLogout function with this:
   const handleLogout = () => {
     Alert.alert("Logout", "Are you sure you want to logout?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Logout", onPress: logout },
+      {
+        text: "Logout",
+        onPress: () => {
+          logout()
+          router.replace("/login")
+        },
+      },
     ])
   }
 

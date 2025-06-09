@@ -1,5 +1,3 @@
-"use client"
-
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native"
 import AnimatedBackground from "../components/animations"
 

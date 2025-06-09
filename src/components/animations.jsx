@@ -1,3 +1,4 @@
+"use client"
 
 import { useEffect, useRef } from "react"
 import { View, Animated, Dimensions, StyleSheet } from "react-native"
@@ -11,58 +12,56 @@ const FloatingSmiley = ({ emoji, delay = 0 }) => {
   const scale = useRef(new Animated.Value(0.5 + Math.random() * 0.5)).current
 
   useEffect(() => {
-    const startFloating = () => {
+    const startBouncing = () => {
       // Reset to top
       translateY.setValue(-50)
       translateX.setValue(Math.random() * (width - 50))
       opacity.setValue(0)
 
-      // Start floating down
+      // Start bouncing animation
       Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: height + 50, // Go all the way to bottom
-          duration: 8000 + Math.random() * 4000, // 8-12 seconds
-          useNativeDriver: true,
-        }),
-        Animated.sequence([
-          Animated.timing(opacity, {
-            toValue: 0.6,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacity, {
-            toValue: 0.3,
-            duration: 6000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-        ]),
-        // Gentle side-to-side drift
+        // Bouncing Y movement
         Animated.loop(
           Animated.sequence([
-            Animated.timing(translateX, {
-              toValue: translateX._value + (Math.random() - 0.5) * 100,
-              duration: 2000,
+            // Fall down
+            Animated.timing(translateY, {
+              toValue: height - 100, // Stop before bottom
+              duration: 4000 + Math.random() * 2000,
               useNativeDriver: true,
             }),
-            Animated.timing(translateX, {
-              toValue: translateX._value - (Math.random() - 0.5) * 100,
-              duration: 2000,
+            // Bounce back up
+            Animated.timing(translateY, {
+              toValue: -50,
+              duration: 4000 + Math.random() * 2000,
               useNativeDriver: true,
             }),
           ]),
         ),
-      ]).start(() => {
-        // Restart the animation
-        startFloating()
-      })
+        // Fade in and stay visible
+        Animated.timing(opacity, {
+          toValue: 0.4 + Math.random() * 0.3, // Random opacity between 0.4-0.7
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        // Gentle side-to-side drift
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(translateX, {
+              toValue: Math.max(0, Math.min(width - 50, translateX._value + (Math.random() - 0.5) * 80)),
+              duration: 3000 + Math.random() * 2000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(translateX, {
+              toValue: Math.max(0, Math.min(width - 50, translateX._value - (Math.random() - 0.5) * 80)),
+              duration: 3000 + Math.random() * 2000,
+              useNativeDriver: true,
+            }),
+          ]),
+        ),
+      ]).start()
     }
 
-    const timer = setTimeout(startFloating, delay)
+    const timer = setTimeout(startBouncing, delay)
     return () => clearTimeout(timer)
   }, [])
 

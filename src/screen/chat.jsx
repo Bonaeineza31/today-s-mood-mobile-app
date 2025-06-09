@@ -1,16 +1,5 @@
-
 import { useState, useRef, useEffect } from "react"
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native"
+import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, } from "react-native"
 import AnimatedBackground from "../components/animations"
 
 export default function ChatScreen() {
@@ -217,9 +206,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     padding: 20,
+    paddingBottom: Platform.OS === "ios" ? 40 : 30, // Extra padding for system navigation
     alignItems: "flex-end",
     gap: 12,
-    backgroundColor: "rgba(255,255,255,0.9)",
+    backgroundColor: "rgba(255,255,255,0.95)",
     borderTopWidth: 1,
     borderTopColor: "rgba(226,232,240,0.5)",
   },

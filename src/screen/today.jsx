@@ -12,7 +12,7 @@ export default function TodayScreen() {
     { emoji: "😊", label: "Good", value: 4, color: "#6BCF7F" },
     { emoji: "😐", label: "Okay", value: 3, color: "#74C0FC" },
     { emoji: "😔", label: "Not Great", value: 2, color: "#A78BFA" },
-    { emoji: "😢", label: "Complicated", value: 1, color: "#F687B3" },
+    { emoji: "😢", label: "Terrible", value: 1, color: "#F687B3" },
   ]
 
   const handleMoodSelect = (mood) => {
