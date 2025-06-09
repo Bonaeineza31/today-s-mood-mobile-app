@@ -38,12 +38,26 @@ npm install
 
 npx expo start
 
+## Scan this QR code with the Expo Go app:
 
 ![Scan QR code](./assets/Screenshot%202025-06-09%20084421.png)
 
-🧩 Challenges & Solutions
+## Quick Glance at the app:
 
-Challenge	Solution
-Animations disappearing	Used the Animated API to create a continuous, smooth bounce effect
-Navigation bar overlap	Added platform-specific padding to maintain UI consistency across devices
-Authentication complexity	Managed user state with Context API for a smooth login/logout experience
+
+1. Today's mood 
+![Today's mood](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.11_76ebeed2.jpg)
+
+
+2. Talk to us
+![Chat with us ](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.12_db2bef2f.jpg)
+
+3. Last couple of Days
+
+![Chat with us ](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.12_2470bace.jpg)
+
+
+# Challenges & Solutions
+
+Had a hard time implementing the backend 
+working on the animations also gave me a hard time
