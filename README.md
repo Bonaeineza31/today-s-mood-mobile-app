@@ -45,14 +45,16 @@ npx expo start
 ## Quick Glance at the app:
 
 
-1. Today's mood 
+## 1. Today's mood 
+
 ![Today's mood](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.11_76ebeed2.jpg)
 
 
-2. Talk to us
+## 2. Talk to us
+
 ![Chat with us ](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.12_db2bef2f.jpg)
 
-3. Last couple of Days
+## 3. Last couple of Days
 
 ![Chat with us ](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.12_2470bace.jpg)
 
