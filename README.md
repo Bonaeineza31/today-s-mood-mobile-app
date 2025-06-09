@@ -44,7 +44,6 @@ npx expo start
 
 ## Quick Glance at the app:
 
-
 ## 1. Today's mood 
 
 ![Today's mood](./assets/WhatsApp%20Image%202025-06-09%20at%2008.41.11_76ebeed2.jpg)
