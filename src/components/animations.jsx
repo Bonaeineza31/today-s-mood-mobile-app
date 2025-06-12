@@ -1,4 +1,4 @@
-"use client"
+
 
 import { useEffect, useRef } from "react"
 import { View, Animated, Dimensions, StyleSheet } from "react-native"

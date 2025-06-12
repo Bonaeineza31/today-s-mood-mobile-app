@@ -8,6 +8,7 @@ import ChatScreen from "../src/screen/chat"
 import HistoryScreen from "../src/screen/history"
 import StatsScreen from "../src/screen/stat"
 import ProfileScreen from "../src/screen/profile"
+import CommunityScreen from "../src/screen/community"
 
 const Tab = createBottomTabNavigator()
 
@@ -25,6 +26,9 @@ export default function Main() {
           } else if (route.name === "Chat") {
             IconComponent = Feather
             iconName = "message-circle"
+          } else if (route.name === "Community") {
+            IconComponent = Feather
+            iconName = "heart"
           } else if (route.name === "History") {
             IconComponent = Feather
             iconName = "calendar"
@@ -72,6 +76,7 @@ export default function Main() {
         }}
       />
       <Tab.Screen name="Chat" component={ChatScreen} options={{ tabBarLabel: "Chat" }} />
+      <Tab.Screen name="Community" component={CommunityScreen} options={{ tabBarLabel: "Stories" }} />
       <Tab.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: "History" }} />
       <Tab.Screen name="Stats" component={StatsScreen} options={{ tabBarLabel: "Insights" }} />
       <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: "Profile" }} />

@@ -1,115 +1,69 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+"use client"
 
-const AuthContext = createContext();
+import { createContext, useContext, useState, useEffect } from "react"
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+const AuthContext = createContext()
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuthState();
-  }, []);
+    // Simulate checking for existing session
+    const timer = setTimeout(() => {
+      setLoading(false)
+    }, 1000)
 
-  const checkAuthState = async () => {
-    try {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-    } catch (error) {
-      console.log('Error checking auth state:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => clearTimeout(timer)
+  }, [])
 
   const login = async (email, password) => {
     try {
-      setLoading(true);
-      
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      
-      if (email && password) {
-        const userData = {
-          id: 1,
-          email: email,
-          name: 'User',
-        };
-        
-        // Save to AsyncStorage
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        
-        return { success: true };
-      } else {
-        return { success: false, error: 'Invalid credentials' };
-      }
-    } catch (error) {
-      return { success: false, error: 'Login failed' };
-    } finally {
-      setLoading(false);
-    }
-  };
+      // Simulate login - for demo purposes, any credentials work
+      // Check if admin
+      const isAdmin = email === "admin@moodsync.com"
+      const userName = isAdmin ? "Admin User" : "Demo User"
 
-  const register = async (email, password, name) => {
+      setUser({ email, name: userName })
+      return { success: true }
+    } catch (error) {
+      return { success: false, error: "Login failed" }
+    }
+  }
+
+  const register = async (name, email, password) => {
     try {
-      setLoading(true);
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (email && password && name) {
-        const userData = {
-          id: 1,
-          email: email,
-          name: name,
-        };
-        
-        // Save to AsyncStorage
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        
-        return { success: true };
-      } else {
-        return { success: false, error: 'All fields are required' };
-      }
+      // Simulate registration
+      setUser({ email, name })
+      return { success: true }
     } catch (error) {
-      return { success: false, error: 'Registration failed' };
-    } finally {
-      setLoading(false);
+      return { success: false, error: "Registration failed" }
     }
-  };
+  }
 
-  const logout = async () => {
-    try {
-      await AsyncStorage.removeItem('user');
-      setUser(null);
-    } catch (error) {
-      console.log('Error logging out:', error);
-    }
-  };
-
-  const value = {
-    user,
-    login,
-    register,
-    logout,
-    loading,
-  };
+  const logout = () => {
+    setUser(null)
+  }
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
+}

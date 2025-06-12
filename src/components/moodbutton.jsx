@@ -1,4 +1,4 @@
-"use client"
+
 
 import { TouchableOpacity, Text, StyleSheet, Animated } from "react-native"
 import { useRef } from "react"
