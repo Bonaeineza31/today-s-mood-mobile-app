@@ -1,6 +1,15 @@
-
 import { useState } from "react"
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, ScrollView } from "react-native"
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  Platform,
+  StatusBar,
+} from "react-native"
 import AnimatedBackground from "../components/animations"
 import { router } from "expo-router"
 
@@ -18,7 +27,6 @@ export default function TodayScreen() {
   const handleMoodSelect = (mood) => {
     setSelectedMood(mood)
 
-    // Show different responses based on mood
     if (mood.value <= 2) {
       Alert.alert(
         "I hear you 💙",
@@ -26,83 +34,83 @@ export default function TodayScreen() {
         [
           { text: "Not now", style: "cancel" },
           { text: "Yes, let's chat", onPress: () => router.push("/chat") },
-        ],
+        ]
       )
     } else {
       Alert.alert(
         "That's wonderful! 🌟",
         `You're feeling ${mood.label.toLowerCase()} today. Keep that positive energy!`,
-        [{ text: "Thanks!" }],
+        [{ text: "Thanks!" }]
       )
     }
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <AnimatedBackground />
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Welcome */}
+        <View style={styles.welcomeCard}>
+          <Text style={styles.welcomeEmoji}>🏠</Text>
+          <Text style={styles.welcomeTitle}>Welcome Home</Text>
+          <Text style={styles.welcomeSubtitle}>Take a moment to check in with yourself</Text>
+        </View>
 
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Welcome Header */}
-          <View style={styles.welcomeCard}>
-            <Text style={styles.welcomeEmoji}>🏠</Text>
-            <Text style={styles.welcomeTitle}>Welcome Home</Text>
-            <Text style={styles.welcomeSubtitle}>Take a moment to check in with yourself</Text>
-          </View>
+        {/* Mood prompt */}
+        <View style={styles.questionCard}>
+          <Text style={styles.questionText}>How are you feeling right now?</Text>
+          <Text style={styles.questionSubtext}>
+            It's okay to not be okay. I'm here to listen. Trust me I won't judge
+          </Text>
+        </View>
 
-          {/* Mood Question */}
-          <View style={styles.questionCard}>
-            <Text style={styles.questionText}>How are you feeling right now?</Text>
-            <Text style={styles.questionSubtext}>It's okay to not be okay. I'm here to listen. Trust me I won't judge</Text>
-          </View>
+        {/* Mood buttons */}
+        <View style={styles.moodContainer}>
+          {moods.map((mood, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.moodButton,
+                { backgroundColor: mood.color },
+                selectedMood?.value === mood.value && styles.selectedMood,
+              ]}
+              onPress={() => handleMoodSelect(mood)}
+            >
+              <Text style={styles.moodEmoji}>{mood.emoji}</Text>
+              <Text style={styles.moodLabel}>{mood.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          {/* Mood Selection */}
-          <View style={styles.moodContainer}>
-            {moods.map((mood, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.moodButton,
-                  { backgroundColor: mood.color },
-                  selectedMood?.value === mood.value && styles.selectedMood,
-                ]}
-                onPress={() => handleMoodSelect(mood)}
-              >
-                <Text style={styles.moodEmoji}>{mood.emoji}</Text>
-                <Text style={styles.moodLabel}>{mood.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* Selected Mood Display */}
-          {selectedMood && (
-            <View style={styles.selectedContainer}>
-              <Text style={styles.selectedText}>
-                Today you're feeling: {selectedMood.emoji} {selectedMood.label}
-              </Text>
-              <TouchableOpacity style={styles.chatButton} onPress={() => router.push("/chat")}>
-                <Text style={styles.chatButtonText}>Want to talk about it? 💬</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* Encouragement */}
-          <View style={styles.encouragementCard}>
-            <Text style={styles.encouragementEmoji}>🌱</Text>
-            <Text style={styles.encouragementTitle}>You're Not Alone</Text>
-            <Text style={styles.encouragementText}>
-              Every feeling is valid. Taking time to acknowledge your emotions is a sign of strength.
+        {/* Mood response */}
+        {selectedMood && (
+          <View style={styles.selectedContainer}>
+            <Text style={styles.selectedText}>
+              Today you're feeling: {selectedMood.emoji} {selectedMood.label}
             </Text>
+            <TouchableOpacity style={styles.chatButton} onPress={() => router.push("/chat")}>
+              <Text style={styles.chatButtonText}>Want to talk about it? 💬</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+        )}
+
+        {/* Encouragement */}
+        <View style={styles.encouragementCard}>
+          <Text style={styles.encouragementEmoji}>🌱</Text>
+          <Text style={styles.encouragementTitle}>You're Not Alone</Text>
+          <Text style={styles.encouragementText}>
+            Every feeling is valid. Taking time to acknowledge your emotions is a sign of strength.
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
+
 
 const styles = StyleSheet.create({
   container: {
