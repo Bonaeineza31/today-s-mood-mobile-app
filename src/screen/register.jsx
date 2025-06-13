@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   button: {
-    backgroundColor: "#6C63FF",
+    backgroundColor: "#FFD700",
     borderRadius: 15,
     paddingVertical: 18,
     alignItems: "center",
