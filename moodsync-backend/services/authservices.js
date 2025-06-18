@@ -36,3 +36,33 @@ export const loginUser = async ({ email, password }) => {
 
   return { token, user };
 };
+
+
+export const requestPasswordReset = async (email) => {
+  const user = await findUserByEmail(email);
+  if (!user) throw new Error("Email not found");
+
+  const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "10m" });
+  await sendPasswordResetEmail(email, token);
+  return { message: "Reset link sent to email." };
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    const [result] = await pool.query("UPDATE users SET password = ? WHERE email = ?", [
+      hashed,
+      decoded.email,
+    ]);
+
+    if (result.affectedRows === 0) {
+      throw new Error("Failed to update password.");
+    }
+
+    return { message: "Password updated successfully" };
+  } catch (err) {
+    throw new Error("Invalid or expired token");
+  }
+};

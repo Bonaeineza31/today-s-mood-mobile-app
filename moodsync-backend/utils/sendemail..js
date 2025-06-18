@@ -17,3 +17,15 @@ export const sendVerificationEmail = async (to, token) => {
     html: `<p>Click to verify:</p><a href="${link}">${link}</a>`,
   });
 };
+
+
+export const sendPasswordResetEmail = async (to, token) => {
+  const link = `http://localhost:3000/api/auth/reset-password/${token}`;
+  await transporter.sendMail({
+    from: `"MoodSync" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: "MoodSync Password Reset",
+    html: `<p>Click below to reset your password (valid for 10 minutes):</p>
+           <a href="${link}">${link}</a>`,
+  });
+};
