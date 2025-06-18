@@ -29,3 +29,14 @@ export const sendPasswordResetEmail = async (to, token) => {
            <a href="${link}">${link}</a>`,
   });
 };
+
+export const sendInvitationEmail = async (to, token) => {
+  const link = `http://localhost:3000/api/auth/accept-invite/${token}`;
+  await transporter.sendMail({
+    from: `"MoodSync" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: "You're invited to MoodSync",
+    html: `<p>Hello! You've been invited to join MoodSync. Click the link below to set your password:</p>
+           <a href="${link}">${link}</a><p>Expires in 1 hour.</p>`,
+  });
+};
