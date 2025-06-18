@@ -1,11 +1,12 @@
 import { registerUser, loginUser, verifyUser,requestPasswordReset,resetPassword ,acceptInviteService } from "../services/authservices.js";
+import { handleError } from "../utils/error.js";
 
 export const register = async (req, res) => {
   try {
     const result = await registerUser(req.body);
     res.status(201).json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    handleError(err, res);
   }
 };
 
@@ -18,15 +19,15 @@ export const verify = async (req, res) => {
   }
 };
 
+
 export const login = async (req, res) => {
   try {
     const result = await loginUser(req.body);
     res.status(200).json(result);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    handleError(err, res);
   }
 };
-
 
 
 export const forgotPassword = async (req, res) => {

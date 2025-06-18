@@ -1,13 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store"; // More secure than AsyncStorage
+import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // contains id, role, email, etc.
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,9 +15,14 @@ export function AuthProvider({ children }) {
     const loadStored = async () => {
       const storedToken = await SecureStore.getItemAsync("authToken");
       if (storedToken) {
-        const decoded = jwtDecode(storedToken);
-        setUser(decoded);
-        setToken(storedToken);
+        try {
+          const decoded = jwtDecode(storedToken);
+          setUser(decoded);
+          setToken(storedToken);
+        } catch (err) {
+          console.warn("Invalid token found in storage, clearing...");
+          await SecureStore.deleteItemAsync("authToken");
+        }
       }
       setLoading(false);
     };
@@ -33,7 +38,10 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
+      if (!res.ok) {
+        console.error("Login error:", data);
+        throw new Error(data.error || "Login failed");
+      }
 
       const decoded = jwtDecode(data.token);
       setUser(decoded);
@@ -55,7 +63,10 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Registration failed");
+      if (!res.ok) {
+        console.error("Registration error:", data);
+        throw new Error(data.error || "Registration failed");
+      }
 
       return { success: true, message: data.message };
     } catch (err) {
