@@ -12,6 +12,7 @@ import {
 } from "react-native"
 import AnimatedBackground from "../components/animations"
 import { router } from "expo-router"
+import { logMood } from "../services/mood"; 
 
 export default function TodayScreen() {
   const [selectedMood, setSelectedMood] = useState(null)
@@ -24,8 +25,17 @@ export default function TodayScreen() {
     { emoji: "😢", label: "Terrible", value: 1, color: "#F687B3" },
   ]
 
-  const handleMoodSelect = (mood) => {
-    setSelectedMood(mood)
+  const handleMoodSelect = async (mood) => {
+  setSelectedMood(mood);
+
+  const userId = 1; // 👈 replace this with your real logged-in user ID from auth context
+  try {
+    const res = await logMood({
+      user_id: userId,
+      mood_label: mood.label,
+      mood_value: mood.value,
+      emoji: mood.emoji,
+    });
 
     if (mood.value <= 2) {
       Alert.alert(
@@ -35,15 +45,15 @@ export default function TodayScreen() {
           { text: "Not now", style: "cancel" },
           { text: "Yes, let's chat", onPress: () => router.push("/chat") },
         ]
-      )
+      );
     } else {
-      Alert.alert(
-        "That's wonderful! 🌟",
-        `You're feeling ${mood.label.toLowerCase()} today. Keep that positive energy!`,
-        [{ text: "Thanks!" }]
-      )
+      Alert.alert("Mood Logged ✅", `You're feeling ${mood.label}. Keep it up!`);
     }
+  } catch (err) {
+    console.error("Mood logging failed:", err);
+    Alert.alert("Error", "Could not save mood. Try again later.");
   }
+};
 
   return (
     <SafeAreaView style={styles.safeArea}>

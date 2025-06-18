@@ -9,17 +9,18 @@ CREATE TABLE blogs (
 
 
 
-CREATE TABLE moods (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  label VARCHAR(50) NOT NULL,
-  value INT NOT NULL,
-  emoji VARCHAR(5) NOT NULL,
-  note TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
 
 
 ALTER TABLE users
 ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+
+
+CREATE TABLE moods (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  mood_label VARCHAR(50),
+  mood_value INT,
+  emoji VARCHAR(10),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
