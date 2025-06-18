@@ -16,3 +16,23 @@ export const findUserByEmail = async (email) => {
 export const verifyUserEmail = async (email) => {
   await pool.query("UPDATE users SET is_verified = true WHERE email = ?", [email]);
 };
+
+export const getAllUsers = async () => {
+  const [rows] = await pool.query("SELECT id, name, email, role, is_verified, is_active FROM users");
+  return rows;
+};
+
+export const setUserActiveStatus = async (id, isActive) => {
+  const [result] = await pool.query("UPDATE users SET is_active = ? WHERE id = ?", [isActive, id]);
+  return result.affectedRows;
+};
+
+export const updateUserRole = async (id, role) => {
+  const [result] = await pool.query("UPDATE users SET role = ? WHERE id = ?", [role, id]);
+  return result.affectedRows;
+};
+
+export const deleteUserById = async (id) => {
+  const [result] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
+  return result.affectedRows;
+};
