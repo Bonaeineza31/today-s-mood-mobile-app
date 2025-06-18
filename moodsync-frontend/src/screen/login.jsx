@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,23 @@ import { useAuth } from "../context/authcontext";
 import { router } from "expo-router";
 import AnimatedBackground from "../components/animations";
 import * as SecureStore from "expo-secure-store";
-import jwtDecode from "jwt-decode";
+
+// Decode JWT manually
+function decodeJWT(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -32,7 +48,7 @@ export default function LoginScreen() {
       const result = await login(formData.email, formData.password);
       if (result.success) {
         const token = await SecureStore.getItemAsync("authToken");
-        const decoded = token ? jwtDecode(token) : null;
+        const decoded = token ? decodeJWT(token) : null;
 
         if (decoded?.role === "superadmin") {
           router.replace("/superadmin-dashboard");
@@ -49,6 +65,7 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
+
 
   return (
     <View style={styles.container}>

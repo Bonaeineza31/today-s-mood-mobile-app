@@ -2,9 +2,26 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import jwtDecode from "jwt-decode";
 
 const AuthContext = createContext();
+
+// Helper to decode a JWT without jwt-decode
+function decodeJWT(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Invalid JWT token", e);
+    return null;
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -15,12 +32,11 @@ export function AuthProvider({ children }) {
     const loadStored = async () => {
       const storedToken = await SecureStore.getItemAsync("authToken");
       if (storedToken) {
-        try {
-          const decoded = jwtDecode(storedToken);
+        const decoded = decodeJWT(storedToken);
+        if (decoded) {
           setUser(decoded);
           setToken(storedToken);
-        } catch (err) {
-          console.warn("Invalid token found in storage, clearing...");
+        } else {
           await SecureStore.deleteItemAsync("authToken");
         }
       }
@@ -38,12 +54,11 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        console.error("Login error:", data);
-        throw new Error(data.error || "Login failed");
-      }
+      if (!res.ok) throw new Error(data.error || "Login failed");
 
-      const decoded = jwtDecode(data.token);
+      const decoded = decodeJWT(data.token);
+      if (!decoded) throw new Error("Failed to decode token");
+
       setUser(decoded);
       setToken(data.token);
       await SecureStore.setItemAsync("authToken", data.token);
@@ -63,10 +78,7 @@ export function AuthProvider({ children }) {
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        console.error("Registration error:", data);
-        throw new Error(data.error || "Registration failed");
-      }
+      if (!res.ok) throw new Error(data.error || "Registration failed");
 
       return { success: true, message: data.message };
     } catch (err) {
