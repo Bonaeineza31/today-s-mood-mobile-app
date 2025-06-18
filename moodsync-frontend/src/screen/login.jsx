@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,42 +9,46 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native"
-import { useAuth } from "../context/authcontext"
-import { router } from "expo-router"
-import AnimatedBackground from "../components/animations"
+} from "react-native";
+import { useAuth } from "../context/authcontext";
+import { router } from "expo-router";
+import AnimatedBackground from "../components/animations";
+import * as SecureStore from "expo-secure-store";
+import jwtDecode from "jwt-decode";
 
 export default function LoginScreen() {
-  const { login } = useAuth()
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
-  const [loading, setLoading] = useState(false)
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!formData.email || !formData.password) {
-      Alert.alert("Error", "Please fill in all fields")
-      return
+      Alert.alert("Error", "Please fill in all fields");
+      return;
     }
 
-    setLoading(true)
-
+    setLoading(true);
     try {
-      const result = await login(formData.email, formData.password)
-
+      const result = await login(formData.email, formData.password);
       if (result.success) {
-        router.replace("/main")
+        const token = await SecureStore.getItemAsync("authToken");
+        const decoded = token ? jwtDecode(token) : null;
+
+        if (decoded?.role === "superadmin") {
+          router.replace("/superadmin-dashboard");
+        } else {
+          router.replace("/main");
+        }
       } else {
-        Alert.alert("Login Failed", result.error || "Please check your credentials")
+        Alert.alert("Login Failed", result.error || "Please check your credentials");
       }
     } catch (error) {
-      Alert.alert("Error", "Something went wrong. Please try again.")
-      console.log("Login error:", error)
+      Alert.alert("Error", "Something went wrong. Please try again.");
+      console.log("Login error:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -53,13 +57,11 @@ export default function LoginScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.content}>
-            {/* Header */}
             <View style={styles.header}>
               <Text style={styles.title}>MoodSync</Text>
               <Text style={styles.subtitle}>Track your daily moods and emotions 😊</Text>
             </View>
 
-            {/* Form */}
             <View style={styles.form}>
               <TextInput
                 style={styles.input}
@@ -90,39 +92,35 @@ export default function LoginScreen() {
                 <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.switchButton} onPress={() => router.push("/register")} disabled={loading}>
+              <TouchableOpacity
+                style={styles.switchButton}
+                onPress={() => router.push("/register")}
+                disabled={loading}
+              >
                 <Text style={styles.switchText}>Don't have an account? Sign Up</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.switchButton}
+                onPress={() => router.push("/forgot-password")}
+                disabled={loading}
+              >
+                <Text style={[styles.switchText, { color: "#3b82f6" }]}>Forgot Password?</Text>
               </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 30,
-    paddingVertical: 50,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 50,
-  },
+  container: { flex: 1, backgroundColor: "transparent" },
+  keyboardView: { flex: 1 },
+  scrollContainer: { flexGrow: 1, justifyContent: "center" },
+  content: { flex: 1, justifyContent: "center", paddingHorizontal: 30, paddingVertical: 50 },
+  header: { alignItems: "center", marginBottom: 50 },
   title: {
     fontSize: 48,
     fontWeight: "bold",
@@ -132,15 +130,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#666",
-    textAlign: "center",
-    fontWeight: "500",
-  },
-  form: {
-    width: "100%",
-  },
+  subtitle: { fontSize: 18, color: "#666", textAlign: "center", fontWeight: "500" },
+  form: { width: "100%" },
   input: {
     backgroundColor: "white",
     borderWidth: 2,
@@ -169,21 +160,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  buttonDisabled: {
-    backgroundColor: "#CCC",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  switchButton: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  switchText: {
-    color: "#666",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-})
+  buttonDisabled: { backgroundColor: "#CCC" },
+  buttonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+  switchButton: { marginTop: 20, alignItems: "center" },
+  switchText: { color: "#666", fontSize: 16, fontWeight: "500" },
+});

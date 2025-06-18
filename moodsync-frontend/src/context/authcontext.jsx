@@ -1,69 +1,83 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store"; // More secure than AsyncStorage
+import jwtDecode from "jwt-decode";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null); // contains id, role, email, etc.
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate checking for existing session
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [])
+    const loadStored = async () => {
+      const storedToken = await SecureStore.getItemAsync("authToken");
+      if (storedToken) {
+        const decoded = jwtDecode(storedToken);
+        setUser(decoded);
+        setToken(storedToken);
+      }
+      setLoading(false);
+    };
+    loadStored();
+  }, []);
 
   const login = async (email, password) => {
     try {
-      // Simulate login - for demo purposes, any credentials work
-      // Check if admin
-      const isAdmin = email === "admin@moodsync.com"
-      const userName = isAdmin ? "Admin User" : "Demo User"
+      const res = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-      setUser({ email, name: userName })
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: "Login failed" }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Login failed");
+
+      const decoded = jwtDecode(data.token);
+      setUser(decoded);
+      setToken(data.token);
+      await SecureStore.setItemAsync("authToken", data.token);
+
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
-  }
+  };
 
   const register = async (name, email, password) => {
     try {
-      // Simulate registration
-      setUser({ email, name })
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: "Registration failed" }
-    }
-  }
+      const res = await fetch("http://localhost:3000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-  const logout = () => {
-    setUser(null)
-  }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Registration failed");
+
+      return { success: true, message: data.message };
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
+
+  const logout = async () => {
+    setUser(null);
+    setToken(null);
+    await SecureStore.deleteItemAsync("authToken");
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        register,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
+};

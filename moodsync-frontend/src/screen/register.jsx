@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from "react";
 import {
   View,
   Text,
@@ -9,49 +9,51 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native"
-import { useAuth } from "../context/authcontext"
-import { router } from "expo-router"
-import AnimatedBackground from "../components/animations"
+} from "react-native";
+import { useAuth } from "../context/authcontext";
+import { router } from "expo-router";
+import AnimatedBackground from "../components/animations";
 
 export default function RegisterScreen() {
-  const { register } = useAuth()
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-  })
-  const [loading, setLoading] = useState(false)
+  });
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields")
-      return
+    const { name, email, password, confirmPassword } = formData;
+
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      Alert.alert("Error", "Passwords do not match")
-      return
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const result = await register(formData.name, formData.email, formData.password)
-
+      const result = await register(name, email, password);
       if (result.success) {
-        router.replace("/main")
+        Alert.alert("Verify Email", result.message || "Check your email to verify your account");
+        router.replace("/login");
       } else {
-        Alert.alert("Registration Failed", result.error || "Please try again")
+        Alert.alert("Registration Failed", result.error || "Please try again");
       }
     } catch (error) {
-      Alert.alert("Error", "Something went wrong. Please try again.")
-      console.log("Registration error:", error)
+      Alert.alert("Error", "Something went wrong. Please try again.");
+      console.log("Registration error:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -60,13 +62,11 @@ export default function RegisterScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.content}>
-            {/* Header */}
             <View style={styles.header}>
               <Text style={styles.title}>Join MoodSync</Text>
               <Text style={styles.subtitle}>Start your emotional wellness journey</Text>
             </View>
 
-            {/* Form */}
             <View style={styles.form}>
               <TextInput
                 style={styles.input}
@@ -124,31 +124,15 @@ export default function RegisterScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 30,
-    paddingVertical: 50,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
+  container: { flex: 1, backgroundColor: "transparent" },
+  keyboardView: { flex: 1 },
+  scrollContainer: { flexGrow: 1, justifyContent: "center" },
+  content: { flex: 1, justifyContent: "center", paddingHorizontal: 30, paddingVertical: 50 },
+  header: { alignItems: "center", marginBottom: 40 },
   title: {
     fontSize: 36,
     fontWeight: "bold",
@@ -158,15 +142,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#666",
-    textAlign: "center",
-    fontWeight: "500",
-  },
-  form: {
-    width: "100%",
-  },
+  subtitle: { fontSize: 18, color: "#666", textAlign: "center", fontWeight: "500" },
+  form: { width: "100%" },
   input: {
     backgroundColor: "white",
     borderWidth: 2,
@@ -195,21 +172,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  buttonDisabled: {
-    backgroundColor: "#CCC",
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  switchButton: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  switchText: {
-    color: "#666",
-    fontSize: 16,
-    fontWeight: "500",
-  },
-})
+  buttonDisabled: { backgroundColor: "#CCC" },
+  buttonText: { color: "white", fontSize: 18, fontWeight: "bold" },
+  switchButton: { marginTop: 20, alignItems: "center" },
+  switchText: { color: "#666", fontSize: 16, fontWeight: "500" },
+});
