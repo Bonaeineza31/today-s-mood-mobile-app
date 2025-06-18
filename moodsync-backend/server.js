@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/authroute.js";
-import moodRoutes from "./routes/moodroute.js";
+import authRoutes from "./routes/authroutes.js";
+import moodRoutes from "./routes/moodroutes.js";
 import blogRoutes from "./routes/blogroute.js";
-import userRoutes from "./routes/userroute.js";
-import adminRoutes from "./routes/adminroute.js"; // invite superadmin
+import userRoutes from "./routes/userroutes.js";
+import adminRoutes from "./routes/adminroutes.js"; // invite superadmin
 
 dotenv.config();
 
@@ -28,5 +28,5 @@ app.use("/api/users", userRoutes);   // superadmin user management
 app.use("/api/admin", adminRoutes);  // invite admin/superadmin
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on http://192.168.43.200:${PORT}`);
 });

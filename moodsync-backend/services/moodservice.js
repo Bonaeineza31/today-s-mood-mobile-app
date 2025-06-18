@@ -1,4 +1,4 @@
-import { logMood, getUserMoods, getMoodStats } from "../models/moodmodel";
+import { logMood, getUserMoods, getMoodStats } from "../models/moodmodel.js";
 
 export const addMood = async ({ user, label, value, emoji, note }) => {
   if (!label || !value || !emoji) throw new Error("Mood fields are required");

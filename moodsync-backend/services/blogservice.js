@@ -4,7 +4,7 @@ import {
   getAllBlogs,
   getBlogById,
   updateBlog,
-} from "../models/blogmodel";
+} from "../models/blogmodel.js";
 
 export const createBlogPost = async ({ title, content, user }) => {
   if (!title || !content) throw new Error("Title and content required");

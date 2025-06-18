@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { findUserById } from "../models/usermodel";
+import { findUserById } from "../models/usermodel.js";
 
 export const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;

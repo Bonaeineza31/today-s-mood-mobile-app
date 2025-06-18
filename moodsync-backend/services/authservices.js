@@ -1,7 +1,15 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, findUserByEmail, verifyUserEmail } from "../models/usermodel.js";
-import { sendVerificationEmail } from "../utils/sendEmail.js";
+import {
+  createUser,
+  findUserByEmail,
+  verifyUserEmail,
+} from "../models/usermodel.js";
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "../utils/sendemail.js";
+import pool from "../config/db.js";
 
 export const registerUser = async ({ name, email, password }) => {
   const existing = await findUserByEmail(email);
@@ -30,13 +38,10 @@ export const loginUser = async ({ email, password }) => {
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) throw new Error("Invalid password");
 
-  const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
   return { token, user };
 };
-
 
 export const requestPasswordReset = async (email) => {
   const user = await findUserByEmail(email);
@@ -52,36 +57,11 @@ export const resetPassword = async (token, newPassword) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const hashed = await bcrypt.hash(newPassword, 10);
 
-    const [result] = await pool.query("UPDATE users SET password = ? WHERE email = ?", [
-      hashed,
-      decoded.email,
-    ]);
-
-    if (result.affectedRows === 0) {
-      throw new Error("Failed to update password.");
-    }
+    const [result] = await pool.query("UPDATE users SET password = ? WHERE email = ?", [hashed, decoded.email]);
+    if (result.affectedRows === 0) throw new Error("Failed to update password");
 
     return { message: "Password updated successfully" };
   } catch (err) {
     throw new Error("Invalid or expired token");
-  }
-};
-
-export const acceptInviteService = async (token, password) => {
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    const hashed = await bcrypt.hash(password, 10);
-    await createUser({
-      name: decoded.name,
-      email: decoded.email,
-      password: hashed,
-      role: decoded.role,
-      is_verified: true,
-    });
-
-    return { message: "Account created. You can now log in." };
-  } catch (err) {
-    throw new Error("Invalid or expired invite token");
   }
 };

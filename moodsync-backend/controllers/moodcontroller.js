@@ -1,4 +1,4 @@
-import { addMood, fetchUserMoods, calculateMoodStats } from "../services/moodservice";
+import { addMood, fetchUserMoods, calculateMoodStats } from "../services/moodservice.js";
 
 export const createMood = async (req, res) => {
   try {

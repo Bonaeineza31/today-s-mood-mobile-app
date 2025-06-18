@@ -3,7 +3,7 @@ import {
   setUserActiveStatus,
   updateUserRole,
   deleteUserById,
-} from "../models/usermodel";
+} from "../models/usermodel.js";
 
 export const fetchAllUsers = async () => {
   return await getAllUsers();

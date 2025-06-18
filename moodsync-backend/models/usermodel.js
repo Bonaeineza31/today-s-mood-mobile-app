@@ -13,6 +13,11 @@ export const findUserByEmail = async (email) => {
   return rows[0];
 };
 
+export const findUserById = async (id) => {
+  const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]); // ✅ fixed
+  return rows[0];
+};
+
 export const verifyUserEmail = async (email) => {
   await pool.query("UPDATE users SET is_verified = true WHERE email = ?", [email]);
 };

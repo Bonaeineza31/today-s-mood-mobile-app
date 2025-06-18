@@ -1,4 +1,4 @@
-import { registerUser, loginUser, verifyUser,requestPasswordReset,resetPassword ,acceptInviteService } from "../services/authservices";
+import { registerUser, loginUser, verifyUser,requestPasswordReset,resetPassword ,acceptInviteService } from "../services/authservices.js";
 
 export const register = async (req, res) => {
   try {

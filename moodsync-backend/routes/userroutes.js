@@ -4,7 +4,7 @@ import {
   enableOrDisable,
   updateRole,
   deleteUser,
-} from "../controllers/user.controller.js";
+} from "../controllers/usercontroller.js";
 import { authenticate } from "../middlewares/authenticate.js";
 import { authorizeRole } from "../middlewares/authorize.js";
 
