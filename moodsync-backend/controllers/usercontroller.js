@@ -3,7 +3,7 @@ import {
   toggleUserActive,
   changeUserRole,
   removeUser,
-} from "../services/user.service.js";
+} from "../services/userservice";
 
 export const getAll = async (req, res) => {
   try {

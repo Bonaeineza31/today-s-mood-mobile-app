@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate } from "../middlewares/authenticate.js";
-import { createMood, getMyMoods, getMyMoodStats } from "../controllers/mood.controller.js";
+import { createMood, getMyMoods, getMyMoodStats } from "../controllers/moodcontroller.js";
 
 const router = express.Router();
 

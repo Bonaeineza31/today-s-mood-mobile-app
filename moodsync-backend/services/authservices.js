@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, findUserByEmail, verifyUserEmail } from "../models/user.model.js";
+import { createUser, findUserByEmail, verifyUserEmail } from "../models/usermodel.js";
 import { sendVerificationEmail } from "../utils/sendEmail.js";
 
 export const registerUser = async ({ name, email, password }) => {
@@ -64,5 +64,24 @@ export const resetPassword = async (token, newPassword) => {
     return { message: "Password updated successfully" };
   } catch (err) {
     throw new Error("Invalid or expired token");
+  }
+};
+
+export const acceptInviteService = async (token, password) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const hashed = await bcrypt.hash(password, 10);
+    await createUser({
+      name: decoded.name,
+      email: decoded.email,
+      password: hashed,
+      role: decoded.role,
+      is_verified: true,
+    });
+
+    return { message: "Account created. You can now log in." };
+  } catch (err) {
+    throw new Error("Invalid or expired invite token");
   }
 };

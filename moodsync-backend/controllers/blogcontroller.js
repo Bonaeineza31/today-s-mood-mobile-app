@@ -3,7 +3,7 @@ import {
   getAllBlogPosts,
   editBlogPost,
   removeBlogPost,
-} from "../services/blog.service.js";
+} from "../services/blogservice";
 
 export const create = async (req, res) => {
   try {

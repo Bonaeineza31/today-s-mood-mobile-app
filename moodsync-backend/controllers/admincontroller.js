@@ -1,4 +1,4 @@
-import { inviteUser } from "../services/admin.service.js";
+import { inviteUser } from "../services/adminservice";
 
 export const sendInvite = async (req, res) => {
   try {

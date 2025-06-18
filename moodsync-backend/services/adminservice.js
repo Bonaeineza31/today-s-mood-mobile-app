@@ -1,5 +1,5 @@
-import { findUserByEmail, createUser } from "../models/user.model.js";
-import { sendInvitationEmail } from "../utils/sendEmail.js";
+import { findUserByEmail, createUser } from "../models/usermodel.js";
+import { sendInvitationEmail } from "../utils/sendemail..js";
 import jwt from "jsonwebtoken";
 
 export const inviteUser = async ({ email, name, role }) => {
