@@ -1,6 +1,4 @@
-"use client"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,50 +9,52 @@ import {
   TextInput,
   Alert,
   Modal,
-} from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import AnimatedBackground from "../components/animations"
-import { useAuth } from "../context/authcontext"
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AnimatedBackground from "../components/animations";
+import { useAuth } from "../context/authcontext";
 
 export default function CommunityScreen() {
-  const { user } = useAuth()
-  const [posts, setPosts] = useState([])
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [newPost, setNewPost] = useState({ title: "", content: "", mood: "😊" })
-  const [selectedPost, setSelectedPost] = useState(null)
-  const [comment, setComment] = useState("")
-  const [isAdmin] = useState(user?.email === "admin@moodsync.com") // Simple admin check
+  const { user } = useAuth();
+  const [posts, setPosts] = useState([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newPost, setNewPost] = useState({ title: "", content: "", mood: "😊" });
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [comment, setComment] = useState("");
 
-  const moods = ["😊", "😄", "🥰", "😍", "🤗", "😎", "🥳", "😇", "🙂", "😋"]
+  // Determine if the user has posting/deletion privileges
+  const isAdmin = user?.role === "superadmin" || user?.email === "admin@moodsync.com";
+
+  const moods = ["😊", "😄", "🥰", "😍", "🤗", "😎", "🥳", "😇", "🙂", "😋"];
 
   useEffect(() => {
-    loadPosts()
-  }, [])
+    loadPosts();
+  }, []);
 
   const loadPosts = async () => {
     try {
-      const storedPosts = await AsyncStorage.getItem("communityPosts")
+      const storedPosts = await AsyncStorage.getItem("communityPosts");
       if (storedPosts) {
-        setPosts(JSON.parse(storedPosts))
+        setPosts(JSON.parse(storedPosts));
       }
     } catch (error) {
-      console.log("Error loading posts:", error)
+      console.log("Error loading posts:", error);
     }
-  }
+  };
 
   const savePosts = async (updatedPosts) => {
     try {
-      await AsyncStorage.setItem("communityPosts", JSON.stringify(updatedPosts))
-      setPosts(updatedPosts)
+      await AsyncStorage.setItem("communityPosts", JSON.stringify(updatedPosts));
+      setPosts(updatedPosts);
     } catch (error) {
-      console.log("Error saving posts:", error)
+      console.log("Error saving posts:", error);
     }
-  }
+  };
 
   const createPost = async () => {
     if (!newPost.title.trim() || !newPost.content.trim()) {
-      Alert.alert("Error", "Please fill in all fields")
-      return
+      Alert.alert("Error", "Please fill in all fields");
+      return;
     }
 
     const post = {
@@ -67,22 +67,22 @@ export default function CommunityScreen() {
       date: new Date().toLocaleDateString(),
       comments: [],
       likes: 0,
-    }
+    };
 
-    const updatedPosts = [post, ...posts]
-    await savePosts(updatedPosts)
-    setNewPost({ title: "", content: "", mood: "😊" })
-    setShowCreateModal(false)
-    Alert.alert("Success", "Your story has been shared! 💙")
-  }
+    const updatedPosts = [post, ...posts];
+    await savePosts(updatedPosts);
+    setNewPost({ title: "", content: "", mood: "😊" });
+    setShowCreateModal(false);
+    Alert.alert("Success", "Your story has been shared! 💙");
+  };
 
   const deletePost = async (postId) => {
-    const post = posts.find((p) => p.id === postId)
-    const canDelete = isAdmin || post.authorEmail === user?.email
+    const post = posts.find((p) => p.id === postId);
+    const canDelete = isAdmin || post.authorEmail === user?.email;
 
     if (!canDelete) {
-      Alert.alert("Error", "You can only delete your own posts")
-      return
+      Alert.alert("Error", "You can only delete your own posts");
+      return;
     }
 
     Alert.alert("Delete Post", "Are you sure you want to delete this story?", [
@@ -91,15 +91,15 @@ export default function CommunityScreen() {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          const updatedPosts = posts.filter((p) => p.id !== postId)
-          await savePosts(updatedPosts)
+          const updatedPosts = posts.filter((p) => p.id !== postId);
+          await savePosts(updatedPosts);
         },
       },
-    ])
-  }
+    ]);
+  };
 
   const addComment = async (postId) => {
-    if (!comment.trim()) return
+    if (!comment.trim()) return;
 
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
@@ -114,24 +114,24 @@ export default function CommunityScreen() {
               date: new Date().toLocaleDateString(),
             },
           ],
-        }
+        };
       }
-      return post
-    })
+      return post;
+    });
 
-    await savePosts(updatedPosts)
-    setComment("")
-  }
+    await savePosts(updatedPosts);
+    setComment("");
+  };
 
   const likePost = async (postId) => {
     const updatedPosts = posts.map((post) => {
       if (post.id === postId) {
-        return { ...post, likes: post.likes + 1 }
+        return { ...post, likes: post.likes + 1 };
       }
-      return post
-    })
-    await savePosts(updatedPosts)
-  }
+      return post;
+    });
+    await savePosts(updatedPosts);
+  };
 
   return (
     <View style={styles.container}>
@@ -145,10 +145,12 @@ export default function CommunityScreen() {
           {isAdmin && <Text style={styles.adminBadge}>Admin</Text>}
         </View>
 
-        {/* Create Post Button */}
-        <TouchableOpacity style={styles.createButton} onPress={() => setShowCreateModal(true)}>
-          <Text style={styles.createButtonText}>+ Share Your Story</Text>
-        </TouchableOpacity>
+        {/* Create Post Button — only for Admins */}
+        {isAdmin && (
+          <TouchableOpacity style={styles.createButton} onPress={() => setShowCreateModal(true)}>
+            <Text style={styles.createButtonText}>+ Share Your Story</Text>
+          </TouchableOpacity>
+        )}
 
         {/* Posts List */}
         <ScrollView style={styles.postsContainer} showsVerticalScrollIndicator={false}>
@@ -221,58 +223,63 @@ export default function CommunityScreen() {
           )}
         </ScrollView>
 
-        {/* Create Post Modal */}
-        <Modal visible={showCreateModal} animationType="slide" presentationStyle="pageSheet">
-          <SafeAreaView style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <TouchableOpacity onPress={() => setShowCreateModal(false)}>
-                <Text style={styles.modalCancel}>Cancel</Text>
-              </TouchableOpacity>
-              <Text style={styles.modalTitle}>Share Your Story</Text>
-              <TouchableOpacity onPress={createPost}>
-                <Text style={styles.modalSave}>Share</Text>
-              </TouchableOpacity>
-            </View>
+        {/* Post Modal — only available to Admins */}
+        {isAdmin && (
+          <Modal visible={showCreateModal} animationType="slide" presentationStyle="pageSheet">
+            <SafeAreaView style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <TouchableOpacity onPress={() => setShowCreateModal(false)}>
+                  <Text style={styles.modalCancel}>Cancel</Text>
+                </TouchableOpacity>
+                <Text style={styles.modalTitle}>Share Your Story</Text>
+                <TouchableOpacity onPress={createPost}>
+                  <Text style={styles.modalSave}>Share</Text>
+                </TouchableOpacity>
+              </View>
 
-            <ScrollView style={styles.modalContent}>
-              <Text style={styles.inputLabel}>How are you feeling?</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodSelector}>
-                {moods.map((mood) => (
-                  <TouchableOpacity
-                    key={mood}
-                    onPress={() => setNewPost({ ...newPost, mood })}
-                    style={[styles.moodOption, newPost.mood === mood && styles.selectedMood]}
-                  >
-                    <Text style={styles.moodEmoji}>{mood}</Text>
-                  </TouchableOpacity>
-                ))}
+              <ScrollView style={styles.modalContent}>
+                <Text style={styles.inputLabel}>How are you feeling?</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.moodSelector}>
+                  {moods.map((mood) => (
+                    <TouchableOpacity
+                      key={mood}
+                      onPress={() => setNewPost({ ...newPost, mood })}
+                      style={[
+                        styles.moodOption,
+                        newPost.mood === mood && styles.selectedMood,
+                      ]}
+                    >
+                      <Text style={styles.moodEmoji}>{mood}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+
+                <Text style={styles.inputLabel}>Title</Text>
+                <TextInput
+                  style={styles.titleInput}
+                  value={newPost.title}
+                  onChangeText={(text) => setNewPost({ ...newPost, title: text })}
+                  placeholder="Today MoodSync helped me..."
+                  placeholderTextColor="#999"
+                />
+
+                <Text style={styles.inputLabel}>Your Story</Text>
+                <TextInput
+                  style={styles.contentInput}
+                  value={newPost.content}
+                  onChangeText={(text) => setNewPost({ ...newPost, content: text })}
+                  placeholder="Share how MoodSync made a difference in your day..."
+                  placeholderTextColor="#999"
+                  multiline
+                  numberOfLines={6}
+                />
               </ScrollView>
-
-              <Text style={styles.inputLabel}>Title</Text>
-              <TextInput
-                style={styles.titleInput}
-                value={newPost.title}
-                onChangeText={(text) => setNewPost({ ...newPost, title: text })}
-                placeholder="Today MoodSync helped me..."
-                placeholderTextColor="#999"
-              />
-
-              <Text style={styles.inputLabel}>Your Story</Text>
-              <TextInput
-                style={styles.contentInput}
-                value={newPost.content}
-                onChangeText={(text) => setNewPost({ ...newPost, content: text })}
-                placeholder="Share how MoodSync made a difference in your day..."
-                placeholderTextColor="#999"
-                multiline
-                numberOfLines={6}
-              />
-            </ScrollView>
-          </SafeAreaView>
-        </Modal>
+            </SafeAreaView>
+          </Modal>
+        )}
       </SafeAreaView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

@@ -1,46 +1,50 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons"
-import { Platform } from "react-native"
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+import { useAuth } from "../src/context/authcontext";
 
-// Import screens - Fixed the stats import
-import TodayScreen from "../src/screen/today"
-import ChatScreen from "../src/screen/chat"
-import HistoryScreen from "../src/screen/history"
-import StatsScreen from "../src/screen/stat"
-import ProfileScreen from "../src/screen/profile"
-import CommunityScreen from "../src/screen/community"
+// Screens
+import TodayScreen from "../src/screen/today";
+import ChatScreen from "../src/screen/chat";
+import HistoryScreen from "../src/screen/history";
+import StatsScreen from "../src/screen/stat";
+import ProfileScreen from "../src/screen/profile";
+import CommunityScreen from "../src/screen/community";
 
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
 
 export default function Main() {
+  const { user } = useAuth();
+  const role = user?.role;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName
-          let IconComponent
+          let iconName;
+          let IconComponent;
 
           if (route.name === "Today") {
-            IconComponent = MaterialCommunityIcons
-            iconName = focused ? "emoticon-happy" : "emoticon-happy-outline"
+            IconComponent = MaterialCommunityIcons;
+            iconName = focused ? "emoticon-happy" : "emoticon-happy-outline";
           } else if (route.name === "Chat") {
-            IconComponent = Feather
-            iconName = "message-circle"
+            IconComponent = Feather;
+            iconName = "message-circle";
           } else if (route.name === "Community") {
-            IconComponent = Feather
-            iconName = "heart"
+            IconComponent = Feather;
+            iconName = "heart";
           } else if (route.name === "History") {
-            IconComponent = Feather
-            iconName = "calendar"
+            IconComponent = Feather;
+            iconName = "calendar";
           } else if (route.name === "Stats") {
-            IconComponent = Feather
-            iconName = "trending-up"
+            IconComponent = Feather;
+            iconName = "trending-up";
           } else if (route.name === "Profile") {
-            IconComponent = Feather
-            iconName = "user"
+            IconComponent = Feather;
+            iconName = "user";
           }
 
-          return <IconComponent name={iconName} size={size} color={color} />
+          return <IconComponent name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#6C63FF",
         tabBarInactiveTintColor: "#A0AEC0",
@@ -68,18 +72,19 @@ export default function Main() {
         headerShown: false,
       })}
     >
-      <Tab.Screen
-        name="Today"
-        component={TodayScreen}
-        options={{
-          tabBarLabel: "Today",
-        }}
-      />
-      <Tab.Screen name="Chat" component={ChatScreen} options={{ tabBarLabel: "Chat" }} />
-      <Tab.Screen name="Community" component={CommunityScreen} options={{ tabBarLabel: "Stories" }} />
-      <Tab.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: "History" }} />
-      <Tab.Screen name="Stats" component={StatsScreen} options={{ tabBarLabel: "Insights" }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: "Profile" }} />
+      {/* Shared screens for all roles */}
+      <Tab.Screen name="Today" component={TodayScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} />
+      <Tab.Screen name="Community" component={CommunityScreen} />
+
+      {/* Only users and admins can access History, Stats, Profile */}
+      {(role === "user" || role === "admin") && (
+        <>
+          <Tab.Screen name="History" component={HistoryScreen} />
+          <Tab.Screen name="Stats" component={StatsScreen} />
+          <Tab.Screen name="Profile" component={ProfileScreen} />
+        </>
+      )}
     </Tab.Navigator>
-  )
+  );
 }

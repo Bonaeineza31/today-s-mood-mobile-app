@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendVerificationEmail = async (to, token) => {
-  const link = `http://192.168.43.200:3000/api/auth/verify/${token}`;
+  const link = `http://192.168.1.226:3000/api/auth/verify/${token}`;
   await transporter.sendMail({
     from: `"MoodSync" <${process.env.EMAIL_USER}>`,
     to,
@@ -19,7 +19,7 @@ export const sendVerificationEmail = async (to, token) => {
 };
 
 export const sendPasswordResetEmail = async (to, token) => {
-  const link = `http://192.168.43.200:3000/api/auth/reset-password/${token}`;
+  const link = `http://192.168.1.226:3000/api/auth/reset-password/${token}`;
   await transporter.sendMail({
     from: `"MoodSync" <${process.env.EMAIL_USER}>`,
     to,
@@ -30,7 +30,7 @@ export const sendPasswordResetEmail = async (to, token) => {
 };
 
 export const sendInvitationEmail = async (to, token) => {
-  const link = `http://192.168.43.200:3000/api/auth/accept-invite/${token}`;
+  const link = `http://192.168.1.226:3000/api/auth/accept-invite/${token}`;
   await transporter.sendMail({
     from: `"MoodSync" <${process.env.EMAIL_USER}>`,
     to,

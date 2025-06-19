@@ -28,5 +28,5 @@ app.use("/api/users", userRoutes);   // superadmin user management
 app.use("/api/admin", adminRoutes);  // invite admin/superadmin
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://192.168.43.200:${PORT}`);
+  console.log(`✅ Server running on http://192.168.1.226:${PORT}`);
 });

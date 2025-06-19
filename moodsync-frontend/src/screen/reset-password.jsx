@@ -27,7 +27,7 @@ export default function ResetPasswordScreen() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://192.168.43.200:3000/api/auth/reset-password/${token}`, {
+      const res = await fetch(`http://192.168.1.226:3000/api/auth/reset-password/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: form.password }),

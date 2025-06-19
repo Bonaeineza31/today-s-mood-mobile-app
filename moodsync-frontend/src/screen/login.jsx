@@ -51,10 +51,12 @@ export default function LoginScreen() {
         const decoded = token ? decodeJWT(token) : null;
 
         if (decoded?.role === "superadmin") {
-          router.replace("/superadmin-dashboard");
-        } else {
-          router.replace("/main");
-        }
+  router.replace("/superadmin");
+} else if (decoded?.role === "admin") {
+  router.replace("/admin");
+} else {
+  router.replace("/main");
+}
       } else {
         Alert.alert("Login Failed", result.error || "Please check your credentials");
       }

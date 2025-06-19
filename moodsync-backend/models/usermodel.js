@@ -1,8 +1,8 @@
 import pool from "../config/db.js";
 
-export const createUser = async ({ name, email, password, role = "user", isVerified = false }) => {
-  const result = await pool.query(
-    "INSERT INTO users (name, email, password, role, is_verified) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+export const createUser = async ({ name, email, password, role = 'user', isVerified = false }) => {
+  await pool.query(
+    "INSERT INTO users (name, email, password, role, is_verified) VALUES (?, ?, ?, ?, ?)",
     [name, email, password, role, isVerified]
   );
   return result.rows[0].id;
